@@ -5,7 +5,7 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
     if (message) {
       const chatBox = document.getElementById('chat-box');
       const newMessageDiv = document.createElement('div');
-      newMessageDiv.textContent = message;
+      newMessageDiv.innerHTML = `<h5>User</h5>` + message;
       chatBox.appendChild(newMessageDiv);
       inputField.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
