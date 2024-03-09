@@ -25,7 +25,7 @@ def specific_phone_number_connection(number):
     conn.close()
 
 
-def transaction_call_cr():
+def transaction_call_cr(acct_number):
     import psycopg2
     
     DB_NAME = "verceldb"
@@ -43,7 +43,7 @@ def transaction_call_cr():
 
     # Creating a cursor
     cur = conn.cursor()
-    cur.execute("SELECT * FROM user_acct_details_db where user_hp =" + number )
+    cur.execute("SELECT * FROM txn_hist_db where crban =" + acct_number)
     rows = cur.fetchall()
     for data in rows:
         print(data)
