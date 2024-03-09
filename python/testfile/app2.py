@@ -1,4 +1,7 @@
-from connectiondb import *
+import sys
+sys.path.append('../')  # Add the parent directory of testfile to the Python path
+
+from connectiondb import * 
 
 accountnumber = "334455667788"
 month = 2

@@ -1,4 +1,8 @@
 # app.py
+from connectiondb import *
+
+hp_number = "'91234578'"
+data = specific_phone_number_connection(hp_number)
 
 from flask import Flask, render_template
 
