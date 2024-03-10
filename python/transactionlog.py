@@ -15,11 +15,11 @@ for transaction in transactiondb:
     }
     transactions_dict_full.append(transaction_dict)
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../client/view')
 
 @app.route("/")
 def home():
-    return render_template("../../client/view/homepage.html", title="Jinja and Flask")
+    return render_template("homepage.html", title="Jinja and Flask")
 
 @app.route("/transactiontesting")
 
@@ -43,11 +43,12 @@ def transaction_test():
 
 @app.route("/fulltransaction")
 def results():
+    title1 = "donkey"
     context = {
-        "title": "Transaction of User",
-        "transactionsByMonths": transactions_dict_full
+        "title": title1,
+        "transactions_dict_full": transactions_dict_full
     }
-    return render_template("client/view/transactionlog.html", **context)
+    return render_template("transactionlog.html", **context)
 
 
 if __name__ == '__main__':
