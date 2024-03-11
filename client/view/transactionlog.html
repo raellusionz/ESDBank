@@ -1,11 +1,11 @@
-<h1>{{title1}}</h1>
-<ul>
+{% extends "homepage.html" %}
+{% block transaction %}
   {% for transaction in transactions_dict_full %}
     <li>
       <em>{{ transaction.txn_time }}:</em> {{ transaction.txn_amt  }}
     </li>
   {% endfor %}
-</ul>
+{% endblock transaction %}
 
 
 
