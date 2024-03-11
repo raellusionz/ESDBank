@@ -1,72 +1,63 @@
-{# homepage.html #}
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% include "heading.html" %}
-  </head>
-  <body>
-    <div class="row">
-        <div class="col-3">
-            {% include "navbar.html" %}
-        </div>
-
-        <div class="container-fluid col p-4">
-            <div class="row">
-                <div class="col-2 d-flex flex-column w-25">
-                    <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
-                        <h5>Account Balance</h5>
-                        <h6>{{amount}}</h6>
-                    </div>
-                    <div class="p-3 shadow position-relative h-100 border rounded-4">
-                        <h6>Monthly spent</h6>
-                        <div class="dropdown position-absolute top-0 end-0 p-2">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              choose
-                            </button>
-                            <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="#">Action</a></li>
-                              <li><a class="dropdown-item" href="#">Another action</a></li>
-                              <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                          </div>
-                        <ul>{% block transactionmonth %}{% endblock transactionmonth %}</ul>
-                    </div>
+{% extends "base.html" %}
+{% block content %}
+    <div class="py-3">
+        <div class="row">
+            <div class="col-2 d-flex flex-column w-25">
+                <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
+                    <h5>Account Balance</h5>
+                    <h6>*Amount here*</h6>
                 </div>
-                <div class="col container shadow border rounded-4 p-3">
-                    <form>
-                        <h5>Quick Transfer</h5>
-                        <div class="mb-3">
-                          <label for="exampleInputPassword1" class="form-label">Phone Number/ Bank Account Number</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
-                        </div>
-                        <div class="mb-3">
-                          <label for="exampleInputPassword1" class="form-label">Amount</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
-                        </div>
-                        <div class="mb-3">
-                          <label for="exampleInputPassword1" class="form-label">Comments</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send {{amount}}</button>
-                      </form>
+                <div class="p-3 shadow position-relative h-100 border rounded-4">
+                    <h6>Monthly spent</h6>
+                    <div class="dropdown position-absolute top-0 end-0 p-2">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        choose
+                        </button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="row ps-2 py-2">
-                <div class="col-6 border shadow p-3 border rounded-4 h-100 me-2">
-                    <h5>Recent Transaction</h5>
-                    <ul>{% block transaction %}{% endblock transaction %}</ul>
-                    
-                </div>
-                <div class="col border shadow p-3 border rounded-4 h-100">
-                    <h5>SplitPay</h5>
-                </div>
+            <div class="col container shadow border rounded-4 p-3">
+                <form>
+                    <h5>Quick Transfer</h5>
+                    <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Phone Number/ Bank Account Number</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Amount</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Comments</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send *this amount*</button>
+                </form>
             </div>
         </div>
 
+        <div class="row ps-2 py-2">
+            <div class="col-6 border shadow p-3 border rounded-4 me-2 h-100">
+            <div class="overflow-y-scroll">
+                <h5>Recent Transaction</h5>
+                <ul class="list-group list-group-flush">
+                    {% for transaction in transactions_dict_full[:8] %}
+                    <li class="list-group-item">
+                      <em>{{ transaction.txn_time }}:</em> {{ transaction.txn_amt  }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                </div>
+            </div>
+    
+            <div class="col border shadow p-3 border rounded-4 h-100">
+                <h5>SplitPay</h5>
+            </div>
+        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </body>
-</html>
+{% endblock %}

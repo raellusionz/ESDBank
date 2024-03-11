@@ -18,8 +18,14 @@ for transaction in transactiondb:
 app = Flask(__name__, template_folder='../client/view')
 
 @app.route("/")
-def home():
-    return render_template("homepage.html", title="Jinja and Flask")
+def results():
+    title1 = "donkey"
+    context = {
+        "title": title1,
+        "transactions_dict_full": transactions_dict_full
+    }
+    return render_template("homepage.html", **context)
+
 
 @app.route("/transactiontesting")
 
@@ -40,16 +46,6 @@ def transaction_test():
             "message": "There are no transactions available for " + acct_number + "."
         }
     ), 404
-
-@app.route("/fulltransaction")
-def results():
-    title1 = "donkey"
-    context = {
-        "title": title1,
-        "transactions_dict_full": transactions_dict_full
-    }
-    return render_template("transactionlog.html", **context)
-
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
