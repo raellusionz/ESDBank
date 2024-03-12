@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 import requests
 import json
 from enum import Enum
+
 class ApiClient:
  apiUri = 'https://api.elasticemail.com/v2'
  secrets = dotenv_values(".env.development.local")
