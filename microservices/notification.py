@@ -1,4 +1,4 @@
-#from dotenv import dotenv_values
+from dotenv import dotenv_values
 import requests
 import json
 from enum import Enum
@@ -19,8 +19,8 @@ EMAIL_API="113EBD6868E6E19E40E314E7D80178CDA8D4FC01FBCC423ABD0A3EE039C03E4E4D0C2
 
 class ApiClient:
  apiUri = 'https://api.elasticemail.com/v2'
- #secrets = dotenv_values(".env.development.local")
- apiKey = "113EBD6868E6E19E40E314E7D80178CDA8D4FC01FBCC423ABD0A3EE039C03E4E4D0C2348B5E7B713F3B30B93482EB80F"
+ secrets = dotenv_values(".env.development.local")
+ apiKey = secrets["EMAIL_API"]
 
  def Request(method, url, data):
   data['apikey'] = ApiClient.apiKey
@@ -80,8 +80,8 @@ def processNotificationDetails(details):
     print()  # print a new line feed as a separator
 
     try:
-        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", senderEmail, "<h1>This is a test</h1>", "This is a test", True)
-        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", recipientEmail, "<h1>This is a test</h1>", "This is a test", True)
+        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", senderEmail, "<h1>This is a test<br> "+senderFullname+" "+amount+"</h1>", "This is a test", True)
+        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", recipientEmail, "<h1>This is a test<br> "+recipientFullname+" "+amount+"</h1>", "This is a test", True)
 
     except:
         return  {
