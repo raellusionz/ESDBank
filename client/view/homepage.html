@@ -5,7 +5,7 @@
             <div class="col-2 d-flex flex-column w-25">
                 <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
                     <h5>Account Balance</h5>
-                    <h6>*Amount here*</h6>
+                    <h6>{{bank_balance}}</h6>
                 </div>
                 <div class="p-3 shadow position-relative h-100 border rounded-4">
                     <h6>Monthly spent</h6>
@@ -18,6 +18,15 @@
                         <li><a class="dropdown-item" href="#">Another action</a></li>
                         <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
+                    </div>
+                    <div class = "p-3"> 
+                        <h6>
+                            Bank-Out Amount : {{monthspendneg}}<br/>
+                        </h6>
+                        <h6>
+                            Bank-In Amount : {{monthspendpos}}
+                        </h6>
+
                     </div>
                 </div>
             </div>
@@ -48,7 +57,10 @@
                 <ul class="list-group list-group-flush">
                     {% for transaction in transactions_dict_full[:8] %}
                     <li class="list-group-item">
-                      <em>{{ transaction.txn_time }}:</em> {{ transaction.txn_amt  }}
+                        
+                        <em>{{ transaction.txn_time }}:
+                        {% if transaction.crban == acct_number %}-{% else %}+{% endif %}
+                        </em> {{ transaction.txn_amt  }}
                     </li>
                     {% endfor %}
                 </ul>
