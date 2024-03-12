@@ -56,11 +56,17 @@
                 <h5>Recent Transaction</h5>
                 <ul class="list-group list-group-flush">
                     {% for transaction in transactions_dict_full[:8] %}
-                    <li class="list-group-item">
-                        
-                        <em>{{ transaction.txn_time }}:
-                        {% if transaction.crban == acct_number %}-{% else %}+{% endif %}
-                        </em> {{ transaction.txn_amt  }}
+                    <li class="list-group-item position-relative">
+                        {% if transaction.crban == acct_number %}
+                            {{ transaction.drban }} 
+                            <!-- space -->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+                            <span class="text-danger">{{ transaction.txn_amt  }}</span>
+                            <span class="position-absolute end-0">{{ transaction.txn_time[:10] }}</span> 
+                        {% else %}
+                            {{ transaction.crban }} 
+                            <!-- space -->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+                            <span class="text-success">{{ transaction.txn_amt  }}</span>
+                            <span class="position-absolute end-0">{{ transaction.txn_time[:10] }}</span>                         {% endif %}
                     </li>
                     {% endfor %}
                 </ul>
