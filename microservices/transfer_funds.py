@@ -136,13 +136,17 @@ def processTransferFunds(details):
     senderEmail = details["senderEmail"]
     recipientFullname = user_accounts_result["data"]["user_fullname"]
     recipientEmail = user_accounts_result["data"]["user_email"]
+    transaction_date = transaction_history_result["data"]["txn_time"]
+    transaction_id = transaction_history_result["data"]["txn_id"]
     data = {
             "data": {
                 "senderFullname": senderFullname,
                 "senderEmail": senderEmail,
                 "recipientFullname": recipientFullname,
                 "recipientEmail": recipientEmail,
-                "amount": transactionAmount
+                "amount": transactionAmount,
+                "transactionDate": transaction_date,
+                "transactionID": transaction_id
                 }
             }
     notification_result = invoke_http(notification_URL, method="POST", json=data)
