@@ -52,8 +52,8 @@
 
         <div class="row ps-2 py-2">
             <div class="col-6 border shadow p-3 border rounded-4 me-2 h-100">
-            <div class="overflow-y-scroll">
                 <h5>Recent Transaction</h5>
+<<<<<<< Updated upstream:client/view/homepage.html
                 <ul class="list-group list-group-flush">
                     {% for transaction in transactions_dict_full[:8] %}
                     <li class="list-group-item position-relative">
@@ -71,6 +71,12 @@
                     {% endfor %}
                 </ul>
                 </div>
+=======
+                <table class="table">
+                    <tbody id="transactionDisplay">
+                    </tbody>
+                  </table>
+>>>>>>> Stashed changes:client/templates/homepage.html
             </div>
     
             <div class="col border shadow p-3 border rounded-4 h-100">
