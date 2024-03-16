@@ -31,19 +31,31 @@
                 </div>
             </div>
             <div class="col container shadow border rounded-4 p-3">
-                <form>
+                <form id="quickTransfer">
                     <h5>Quick Transfer</h5>
                     <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Phone Number/ Bank Account Number</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    <input type="text" class="form-control" id="phoneNumberBAN">
                     </div>
                     <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Amount</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    <input type="text" class="form-control" id="amount">
+                    </div>
+                    <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Category</label>
+                    <select class="form-select" id="category">
+                        <option>Funds Transfer</option>
+                        <option>Income</option>
+                        <option>Necessities</option>
+                        <option>Transportation</option>
+                        <option>Food & Drink</option>
+                        <option>Shopping & Entertainment</option>
+                        <option>Others</option>
+                    </select>
                     </div>
                     <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Comments</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1">
+                    <input type="text" class="form-control" id="comments">
                     </div>
                     <button type="submit" class="btn btn-primary">Send *this amount*</button>
                 </form>
@@ -55,20 +67,7 @@
             <div class="overflow-y-scroll">
                 <h5>Recent Transaction</h5>
                 <ul class="list-group list-group-flush">
-                    {% for transaction in transactions_dict_full[:8] %}
-                    <li class="list-group-item position-relative">
-                        {% if transaction.crban == acct_number %}
-                            {{ transaction.drban }} 
-                            <!-- space -->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
-                            <span class="text-danger">{{ transaction.txn_amt  }}</span>
-                            <span class="position-absolute end-0">{{ transaction.txn_time[:10] }}</span> 
-                        {% else %}
-                            {{ transaction.crban }} 
-                            <!-- space -->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
-                            <span class="text-success">{{ transaction.txn_amt  }}</span>
-                            <span class="position-absolute end-0">{{ transaction.txn_time[:10] }}</span>                         {% endif %}
-                    </li>
-                    {% endfor %}
+                    <!-- to add in transaction history -->
                 </ul>
                 </div>
             </div>
@@ -78,4 +77,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scriptsCall %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="{{ url_for('static', filename='homepage.js') }}"></script>
 {% endblock %}
