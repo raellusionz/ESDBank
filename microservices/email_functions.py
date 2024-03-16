@@ -1,11 +1,9 @@
 from mailersend import emails
 from dotenv import dotenv_values
 
-mailer = emails.NewEmail(dotenv_values('.env.development.local')['MAILER_EMAIL_API'])
+mailer = emails.NewEmail(dotenv_values('../.env.development.local')['EMAIL_API'])
 
 def sendEmail(name1, name2, email, transactionAmount, transactionDate, transactionID, content):
-
-    mailer = emails.NewEmail(dotenv_values('.env.development.local')['MAILER_EMAIL_API'])
 
     # define an empty dict to populate with mail values
     mail_body = {}
@@ -30,7 +28,7 @@ def sendEmail(name1, name2, email, transactionAmount, transactionDate, transacti
     content =f"""<h1>Transaction completed!</h1>
                 <p>Dear {name1},<br>
                 We're thrilled to inform you that a transaction has been successfully completed with your bank account. Your financial affairs are now up to date!</p>
-                <p>Transaction Details<br>
+                <p><b>Transaction Details<b><br>
                     Transaction ID: {transactionID}<br>
                     Date: {transactionDate[:10]}<br>
                     Time: {transactionDate[11:]}<br>

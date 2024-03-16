@@ -6,15 +6,28 @@ import os, sys
 import requests
 from invokes import invoke_http
 
+import pika
+import json
+import amqp_connection
+
 app = Flask(__name__)
 CORS(app)
 
 user_accounts_URL = "http://127.0.0.1:5000/userAccounts/hp_num/"
 bank_accounts_URL = "http://127.0.0.1:5001/bankAccounts/transferral/"
-activity_log_URL = "http://127.0.0.1:5002/activity_log"
-transaction_history_URL = "http://127.0.0.1:5003/transaction_history"
-notification_URL = "http://127.0.0.1:5004/notification/email"
-error_URL = "http://127.0.0.1:5005/error"
+transaction_history_URL = "http://127.0.0.1:5002/transaction_history"
+
+exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
+exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+
+#create a connection and a channel to the broker to publish messages to activity_log, error queues
+connection = amqp_connection.create_connection() 
+channel = connection.channel()
+
+#if the exchange is not yet created, exit the program
+if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
+    print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
+    sys.exit(0)  # Exit with a success status
 
 @app.route("/transfer_funds", methods=['POST'])
 def transfer_funds():
@@ -27,6 +40,8 @@ def transfer_funds():
             # do the actual work
             # 1. Send transfer details from UI {SenderFullname, SenderBAN, SenderEmail, RecipientPhoneNumber, TransactionAmount}
             result = processTransferFunds(details)
+            print('\n------------------------')
+            print('\nresult: ', result)
             return jsonify(result), result["code"]
 
         except Exception as e:
@@ -58,24 +73,23 @@ def processTransferFunds(details):
     user_accounts_result = invoke_http(user_accounts_URL+f"{recipient_hp}", method='GET')
     print('user_accounts_result:', user_accounts_result)
 
-    # 4. Record new user_accounts lookup activity
-    print('\n\n-----Invoking activity_log microservice-----')
-    invoke_http(activity_log_URL, method="POST", json=user_accounts_result)
-    print("\nDatabase phone number lookup request sent to activity log.\n")
-    # - reply from the invocation is not used;
-    # continue even if this invocation fails
 
-    # Check the user_accounts lookup result; if a failure, send it to the error microservice.
     code = user_accounts_result["code"]
+    message = json.dumps(user_accounts_result)
+
+
     if code not in range(200, 300):
 
-        # Inform the error microservice
-        print('\n\n-----Invoking error microservice as transfer fails-----')
-        invoke_http(error_URL, method="POST", json=user_accounts_result)
+        print('\n\n-----Publishing the (user_accounts lookup error) message with routing_key=user_accounts.error-----')
+        channel.basic_publish(exchange=exchangename, routing_key="user_accounts.error", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+        # make message persistent within the matching queues until it is received by some receiver 
+        # (the matching queues have to exist and be durable and bound to the exchange)
+
 
         # - reply from the invocation is not used; 
         # continue even if this invocation fails
-        print("User_accounts MS status ({:d}) sent to the error microservice:".format(
+        print("\nUser_accounts MS status ({:d}) published to the RabbitMQ Exchange:".format(
             code), user_accounts_result)
 
 
@@ -85,6 +99,17 @@ def processTransferFunds(details):
             "data": {"user_accounts_result": user_accounts_result},
             "message": "User_accounts lookup failure sent for error handling."
         }
+    
+    else:
+        # 4. Record new user_accounts lookup activity
+        print('\n\n-----Publishing the (user_accounts lookup details) message with routing_key=user_accounts.details-----')        
+        channel.basic_publish(exchange=exchangename, routing_key="user_accounts.details", 
+            body=message)
+        
+    print("\nDatabase phone number lookup request published to RabbitMQ Exchange.\n")
+    # - reply from the invocation is not used;
+    # continue even if this invocation fails
+
 
     # 5. Send retrieved bank_acct_ids to bank_accounts microservice
     print('\n\n-----Invoking bank_accounts microservice-----')
@@ -93,41 +118,82 @@ def processTransferFunds(details):
     print('bank_accounts_result:', bank_accounts_result)
 
 
-    # 7. Record new transferral activity
-    print('\n\n-----Invoking activity_log microservice-----')
-    invoke_http(activity_log_URL, method="POST", json=bank_accounts_result)
-    print("\nTransfer request sent to activity log.\n")
-    # - reply from the invocation is not used;
-    # continue even if this invocation fails
-
-
     # Check the transfer request result; if a failure, send it to the error microservice.
     code = bank_accounts_result["code"]
     if code not in range(200, 300):
 
         # Inform the error microservice
-        print('\n\n-----Invoking error microservice as transfer fails-----')
-        invoke_http(error_URL, method="POST", json=bank_accounts_result)
+        print('\n\n-----Publishing the (bank_accounts transfer error) message with routing_key=bank_accounts.error-----')
+        message = json.dumps(bank_accounts_result)
+        channel.basic_publish(exchange=exchangename, routing_key="bank_accounts.error", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))
 
-        # - reply from the invocation is not used; 
-        # continue even if this invocation fails
-        print("Bank_accounts MS status ({:d}) sent to the error microservice:".format(
+        print("\nBank_accounts MS status ({:d}) published to the RabbitMQ Exchange:".format(
             code), bank_accounts_result)
 
 
         # 7. Return error
         return {
-            "code": 500,
+            "code": 400,
             "data": {"bank_accounts_result": bank_accounts_result},
             "message": "Bank_accounts fund transferral failure sent for error handling."
         }
+    
+    else:
+        # 4. Record new order
+        # record the activity log anyway
+        #print('\n\n-----Invoking activity_log microservice-----')
+        print('\n\n-----Publishing the (bank_accounts transfer details) message with routing_key=bank_accounts.details-----')        
 
-    # 8. Send new transfer request to transaction history
-    # Invoke the transaction_history microservice
+        # invoke_http(activity_log_URL, method="POST", json=order_result)            
+        channel.basic_publish(exchange=exchangename, routing_key="bank_accounts.details", 
+            body=message)
+        
+    print("\nTransfer request published to RabbitMQ Exchange.\n")
+    # - reply from the invocation is not used;
+    # continue even if this invocation fails
+
+    # 8. Send new transfer request details to RabbitMQ
     print('\n\n-----Invoking transaction_history microservice-----')
     transaction_history_result = invoke_http(
         transaction_history_URL, method="POST", json=bank_accounts_result['data'])
     print("transaction_history_result:", transaction_history_result, '\n')
+
+    # Check the transfer request result; if a failure, send it to the error microservice.
+    code = transaction_history_result["code"]
+    message = json.dumps(transaction_history_result)
+
+    if code not in range(200, 300):
+
+        print('\n\n-----Publishing the (bank_accounts transfer error) message with routing_key=transaction_history.error-----')
+        message = json.dumps(transaction_history_result)
+        channel.basic_publish(exchange=exchangename, routing_key="transaction_history.error", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))
+
+        print("\nTransaction_history MS status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), bank_accounts_result)
+
+
+        # 7. Return error
+        return {
+            "code": 400,
+            "data": {"transaction_history_result": bank_accounts_result},
+            "message": "Transaction_history transaction logging failure sent for error handling."
+        }
+    
+    else:
+        # 4. Record new order
+        # record the activity log anyway
+        #print('\n\n-----Invoking activity_log microservice-----')
+        print('\n\n-----Publishing the (transaction_history logging details) message with routing_key=transaction_history.details-----')        
+
+        # invoke_http(activity_log_URL, method="POST", json=order_result)            
+        channel.basic_publish(exchange=exchangename, routing_key="transaction_history.details", 
+            body=message)
+        
+    print("\nTransaction history log published to RabbitMQ Exchange.\n")
+
+
 
     # 9. Send the relevant info {senderFullname, recipientFullname, senderEmail, recipientEmail} to notification microservice
     # Invoke the notification microservice
@@ -149,8 +215,11 @@ def processTransferFunds(details):
                 "transactionID": transaction_id
                 }
             }
-    notification_result = invoke_http(notification_URL, method="POST", json=data)
-    print("notification result:", notification_result, '\n')
+    
+    message = json.dumps(data)
+    print('\n\n-----Publishing the (notification details) message with routing_key=notification.details-----')
+    channel.basic_publish(exchange=exchangename, routing_key="notification.details", 
+            body=message)
 
     # 10. Return successful fund transfer results
     return {
