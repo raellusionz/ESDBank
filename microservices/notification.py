@@ -1,75 +1,51 @@
-from dotenv import dotenv_values
-import requests
-import json
-from enum import Enum
-
 #!/usr/bin/env python3
 # The above shebang (#!) operator tells Unix-like environments
 # to run this file as a python3 script
 
+from enum import Enum
+
 import sys
-import os
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from email_functions import sendEmail
 
-app = Flask(__name__)
-CORS(app)
+import amqp_connection
+import json
+import pika
 
-EMAIL_API="113EBD6868E6E19E40E314E7D80178CDA8D4FC01FBCC423ABD0A3EE039C03E4E4D0C2348B5E7B713F3B30B93482EB80F"
+n_queue_name = amqp_connection.secrets['n_queue_name'] # "Notification"
 
-class ApiClient:
- apiUri = 'https://api.elasticemail.com/v2'
- secrets = dotenv_values(".env.development.local")
- apiKey = secrets["EMAIL_API"]
+exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
+exchangetype = amqp_connection.secrets['exchangetype'] #topic 
 
- def Request(method, url, data):
-  data['apikey'] = ApiClient.apiKey
-  if method == 'POST':
-   result = requests.post(ApiClient.apiUri + url, data = data)
-  elif method == 'PUT':
-   result = requests.put(ApiClient.apiUri + url, data = data)
-  elif method == 'GET':
-   attach = ''
-   for key in data:
-    attach = attach + key + '=' + data[key] + '&' 
-   url = url + '?' + attach[:-1]
-   result = requests.get(ApiClient.apiUri + url) 
-   
-  jsonMy = result.json()
-  
-  if jsonMy['success'] is False:
-   return jsonMy['error']
-   
-  return jsonMy['data']
+#create a connection and a channel to the broker to publish messages to activity_log, error queues
+connection = amqp_connection.create_connection() 
+channel = connection.channel()
 
-def Send(subject, EEfrom, fromName, to, bodyHtml, bodyText, isTransactional):
- return ApiClient.Request('POST', '/email/send', {
-  'subject': subject,
-  'from': EEfrom,
-  'fromName': fromName,
-  'to': to,
-  'bodyHtml': bodyHtml,
-  'bodyText': bodyText,
-  'isTransactional': isTransactional})
+#if the exchange is not yet created, exit the program
+if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
+    print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
+    sys.exit(0)  # Exit with a success status
 
-@app.route("/notification/email", methods=['POST'])
-def sendEmailNotification():
-    # Check if the request contains valid JSON
-    notificationDetails = None
-    if request.is_json:
-        notificationDetails = request.get_json()
-        result = processNotificationDetails(notificationDetails)
-        return result, result["code"]
+def receiveEmailDetails(channel):
+    try:
+        # set up a consumer and start to wait for coming messages
+        channel.basic_consume(queue=n_queue_name, on_message_callback=callback, auto_ack=True)
+        print('notification microservice: Consuming from queue:', n_queue_name)
+        channel.start_consuming() # an implicit loop waiting to receive messages; 
+        #it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
     
-    else:
-        notificationDetails = request.get_data()
-        print("Received an invalid details:")
-        print(notificationDetails)
-        print()
-        return jsonify({"code": 400, "message": "Notification details input should be in JSON."}), 400 # Bad Request
+    except pika.exceptions.AMQPError as e:
+        print(f"notification microservice: Failed to connect: {e}") 
+
+    except KeyboardInterrupt:
+        print("notification microservice: Program interrupted by user.")
+
+def callback(channel, method, properties, body): # required signature for the callback; no return
+    print("\nnotification microservice: Received details from " + __file__)
+    processNotificationDetails(json.loads(body))
+    print()
 
 def processNotificationDetails(details):
-    print("Processing a notification details:")
+    print("Processing notification details:")
     print(details)
 
     senderFullname = str(details["data"]["senderFullname"])
@@ -77,24 +53,45 @@ def processNotificationDetails(details):
     recipientFullname = str(details["data"]["recipientFullname"])
     recipientEmail = str(details["data"]["recipientEmail"])
     amount = str(details["data"]["amount"])
+    transactionDate = str(details["data"]["transactionDate"])
+    transactionID = str(details["data"]["transactionID"])
+    senderContent = "Sent to"
+    recipientContent = "Received from"
     print()  # print a new line feed as a separator
 
     try:
-        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", senderEmail, "<h1>This is a test<br> "+senderFullname+" "+amount+"</h1>", "This is a test", True)
-        Send("TEST", "esdbanknotification@gmail.com", "ESDBank", recipientEmail, "<h1>This is a test<br> "+recipientFullname+" "+amount+"</h1>", "This is a test", True)
+        sendEmail(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
+        sendEmail(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
+        result = {
+                "code": 201,
+                "message": "Notification mails successfully sent."
+                }
+        code = result["code"]
+        message = json.dumps(result)
 
     except:
-        return  {
+        result = {
                 "code": 500,
                 "message": "An error occurred sending the notification emails."
                 }
+        code = result["code"]
+        message = json.dumps(result)
 
-    return  {
-            "code": 201,
-            "message": "Notification mails successfully sent."
-            }
-
+        print('\n\n-----Publishing the (notification error) message with routing_key=notification.error-----')
+        channel.basic_publish(exchange=exchangename, routing_key="notification.error", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))
+        print("\nNotification MS status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), result)
+        
+    else:
+        print('\n\n-----Publishing the (notification activity) message with routing_key=notification.activity-----')
+        channel.basic_publish(exchange=exchangename, routing_key="notification.activity", 
+                body=message)
+        print("\nNotification activity published to the RabbitMQ Exchange.")
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
-    print("This is flask for " + os.path.basename(__file__) + ": sending notifications ...")
-    app.run(host='0.0.0.0', port=5004, debug=True)
+    print("notification microservice: Getting Connection")
+    connection = amqp_connection.create_connection() #get the connection to the broker
+    print("notification microservice: Connection established successfully")
+    channel = connection.channel()
+    receiveEmailDetails(channel)
