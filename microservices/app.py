@@ -12,7 +12,8 @@ def home():
 @app.route("/getTransactionHist", methods=['POST'])    
 def getTransactionHist():
     bankID = request.json['bankID']
-    transactionHist = invoke_http("/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
+    transactionHist = invoke_http("http://127.0.0.1:5003/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
     return transactionHist
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
