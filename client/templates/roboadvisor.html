@@ -1,4 +1,4 @@
-{% extends "base.html"}
+{% extends "base.html" %}
 {% block additionalHeaders %}
     <link rel="stylesheet" href="../static/roboadvisor.css">
 {% endblock %}
@@ -11,4 +11,8 @@
         <button type="submit">Send</button>
         </form>
     </div>
+{% endblock %}
+
+{% block scriptsCall %}
+    <script src="{{ url_for('static', filename='roboadvisor.js') }}"></script>
 {% endblock %}
