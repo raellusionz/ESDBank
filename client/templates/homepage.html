@@ -1,49 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="py-3">
+    <div class="py-3" id="main">
         <div class="row">
             <div class="col-2 d-flex flex-column w-25">
                 <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
                     <h5>Account Balance</h5>
-                    <h6>{{bank_balance}}</h6>
+                    <h6>${[accountBalance]}</h6>
                 </div>
                 <div class="p-3 shadow position-relative h-100 border rounded-4">
-                    <h6>Monthly spent</h6>
-                    <div class="dropdown position-absolute top-0 end-0 p-2">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        choose
-                        </button>
-                        <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </div>
-                    <div class = "p-3"> 
-                        <h6>
-                            Bank-Out Amount : {{monthspendneg}}<br/>
-                        </h6>
-                        <h6>
-                            Bank-In Amount : {{monthspendpos}}
-                        </h6>
-
-                    </div>
+                    <h5>Money Insights</h5>
+                    <span>
+                        {[month_names[month]]}
+                    </span>
+                    <br><br>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Change in balance</td>
+                                <td>{[balanceChange]}</td>
+                            </tr>
+                            <tr>
+                                <td>Money in</td>
+                                <td><span class="text-success">{[moneyIn]}</span></td>
+                            </tr>
+                            <tr>
+                                <td>Money out</td>
+                                <td><span class="text-danger">{[moneyOut]}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col container shadow border rounded-4 p-3">
-                <form id="quickTransfer">
+                <form id="quickTransfer" @submit.prevent="submit">
                     <h5>Quick Transfer</h5>
                     <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Phone Number/ Bank Account Number</label>
-                    <input type="text" class="form-control" id="phoneNumberBAN">
+                    <label for="phoneNumberBAN" class="form-label">Phone Number/ Bank Account Number</label>
+                    <input type="text" class="form-control" id="phoneNumberBAN" v-model="form.receiver">
                     </div>
                     <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Amount</label>
-                    <input type="text" class="form-control" id="amount">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input type="text" class="form-control" id="amount" v-model="form.amount">
                     </div>
                     <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Category</label>
-                    <select class="form-select" id="category">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" v-model="form.category">
                         <option>Funds Transfer</option>
                         <option>Income</option>
                         <option>Necessities</option>
@@ -53,11 +54,7 @@
                         <option>Others</option>
                     </select>
                     </div>
-                    <div class="mb-3">
-                    <label for="exampleInputPassword1" class="form-label">Comments</label>
-                    <input type="text" class="form-control" id="comments">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Send *this amount*</button>
+                    <button type="submit" class="btn btn-primary">Transfer</button>
                 </form>
             </div>
         </div>
@@ -66,7 +63,12 @@
             <div class="col-6 border shadow p-3 border rounded-4 me-2 h-100">
                 <h5>Recent Transaction</h5>
                 <table class="table">
-                    <tbody id="transactionDisplay">
+                    <tbody v-for="transaction in transactions">
+                        <tr>
+                            <td>{[transaction.drban]}</td>
+                            <td><span :class="{'text-success': transaction.crban == bankID, 'text-danger': transaction.crban != bankID}">{[transaction.txn_amt]}</span></td>
+                            <td>{[transaction.txn_time]}</td>
+                          </tr>
                     </tbody>
                 </table>
 
@@ -80,6 +82,6 @@
 {% endblock %}
 
 {% block scriptsCall %}
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="{{ url_for('static', filename='homepage.js') }}"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="{{ url_for('static', filename='homepage-vue.js') }}"></script>
 {% endblock %}
