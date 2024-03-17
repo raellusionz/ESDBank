@@ -17,6 +17,12 @@ def getTransactionHist():
     transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
     return transactionHist
 
+@app.route("/getAccountBalance", methods=['POST'])    
+def getAccountBalance():
+    bankID = request.json['bankID']
+    accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
+    return accountBalance
+
 @app.route("/roboadvisor")
 def roboadvisor():
     return render_template("roboadvisor.html")
