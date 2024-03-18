@@ -9,11 +9,14 @@ To create virtual env, use command line:
 $ python3.10 -m venv venv
 
 activate the vitual env, use command line:
-source venv/bin/activate
+$ source venv/bin/activate
 
--- after being in the correct correct env --
+-- after being in a correct env --
+To install rasa, use command line:
+$ pip install rasa
+
 To run rasa, use command line:
-$ rasa shell. 
+$ rasa shell
 
 If rasa says to train the model before running, use command line:
 $ rasa train
