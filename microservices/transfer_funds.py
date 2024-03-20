@@ -114,7 +114,7 @@ def processTransferFunds(details):
     # 5. Send retrieved bank_acct_ids to bank_accounts microservice
     print('\n\n-----Invoking bank_accounts microservice-----')
     recipient_BAN = user_accounts_result["data"]["bank_acct_id"]
-    bank_accounts_result = invoke_http(bank_accounts_URL+f"/{senderBAN}/{recipient_BAN}/{transactionAmount}", method="PUT")
+    bank_accounts_result = invoke_http(bank_accounts_URL+f"{senderBAN}/{recipient_BAN}/{transactionAmount}", method="PUT")
     print('bank_accounts_result:', bank_accounts_result)
 
 

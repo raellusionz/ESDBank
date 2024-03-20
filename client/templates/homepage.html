@@ -32,7 +32,8 @@
                 </div>
             </div>
             <div class="col container shadow border rounded-4 p-3">
-                <form id="quickTransfer" @submit.prevent="submit">
+                <!--Check whether the submit even listeners conflict-->
+                <form id="quickTransfer" @submit.prevent="submit" onSubmit="submitForm()">
                     <h5>Quick Transfer</h5>
                     <div class="mb-3">
                     <label for="phoneNumberBAN" class="form-label">Phone Number/ Bank Account Number</label>
