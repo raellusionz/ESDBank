@@ -38,5 +38,11 @@ def webhook():
     bot_response = rasa_response_json[0]['text'] if rasa_response_json else 'Sorry, I didn\'t understand that.'
     return jsonify({'response': bot_response })
 
+@app.route("/transferFundsFromUI", methods=['POST'])    
+def transferFundsFromUI():
+    request_data = request.get_json()
+    result = invoke_http("http://127.0.0.1:5100/transfer_funds", method='POST', json=request_data)
+    return result
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=4999, debug=True)
