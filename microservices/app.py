@@ -50,6 +50,10 @@ def getTransactionHist():
 def roboadvisor():
     return render_template("roboadvisor.html")
 
+@app.route("/splitpay")
+def splitpay():
+    return render_template("splitpay.html")
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     user_message = request.json['message']

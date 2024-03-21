@@ -1,0 +1,62 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+.groups {
+    margin-bottom: 10px;
+}
+.group {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 10px;
+    border-radius: 5px;
+    width: auto;
+    /* p-3 shadow position-relative h-100 border rounded-4 */
+    position: relative;
+}
+.group-title {
+    font-weight: bold;
+    /* margin-bottom: 10px; */
+    position: relative;
+}
+.group-title::after { /* Added pseudo-element */
+    content: "";
+    position: absolute;
+    bottom: -1px; /* Adjust as needed */
+    left: 0; /* Adjust as needed */
+    width: auto; /* Adjust as needed */
+    height: 1px;
+    background-color: #ccc;
+}
+.balance {
+    margin-bottom: 5px;
+}
+.balance-info {
+    font-size: 12px; /* Reduced font size */
+    color: #666;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+  
+.balance-amount {
+    font-size: 16px; /* Increased font size */
+    color: #333;
+    position: absolute;
+    right: 0;
+    top: 16px; /* Adjusted top position to be below the balance-info */
+}
+.new-group-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.new-group-button:hover {
+    background-color: #0056b3;
+}
