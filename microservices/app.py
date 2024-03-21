@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import requests
 import json
 from invokes import invoke_http
@@ -6,22 +6,45 @@ from invokes import invoke_http
 RASA_API_URL = 'http://localhost:5005/webhooks/rest/webhook'
 
 app = Flask(__name__, template_folder="../client/templates", static_folder="../client/static")
+app.secret_key = "esdSecret"
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.json["email"]
+        data = invoke_http("http://127.0.0.1:5000/userAccounts/user_email/" + email)
+        data = json.dumps(data)
+        userAccntDetails = json.loads(data)
+        print(userAccntDetails)
+        bankID = userAccntDetails["data"]["bank_acct_id"]
+        session["bankID"] = bankID
+        return redirect(url_for("home"))
+    else:
+        return render_template("login.html")
+
+@app.route("/home")
 @app.route("/")
 def home():
-    return render_template("homepage.html")
+    if "bankID" in session:
+        bankID = session["bankID"]
+        transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
+        accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
+        # print(data)
+        # data = json.dumps(data)
+        # accountBalance = json.loads(data)
+        print(accountBalance)
+        content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data']}
+        # print(content)
+        return render_template("homepage.html", content=content)
+    else:
+        print("redirecting to login again")
+        return redirect(url_for("login"))
 
 @app.route("/getTransactionHist", methods=['POST'])    
 def getTransactionHist():
     bankID = request.json['bankID']
     transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
     return transactionHist
-
-@app.route("/getAccountBalance", methods=['POST'])    
-def getAccountBalance():
-    bankID = request.json['bankID']
-    accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
-    return accountBalance
 
 @app.route("/roboadvisor")
 def roboadvisor():

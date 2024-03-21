@@ -5,7 +5,7 @@
             <div class="col-2 d-flex flex-column w-25">
                 <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
                     <h5>Account Balance</h5>
-                    <h6>${[accountBalance]}</h6>
+                    <h6>${{content['accountBalance']['acct_balance']}}</h6>
                 </div>
                 <div class="p-3 shadow position-relative h-100 border rounded-4">
                     <h5>Money Insights</h5>
@@ -62,23 +62,24 @@
         </div>
 
         <div class="row ps-2 py-2">
-            <div class="col-6 border shadow p-3 border rounded-4 me-2 h-100">
+            <div class="col border shadow p-3 border rounded-4 me-2 h-100">
                 <h5>Recent Transaction</h5>
                 <table class="table">
-                    <tbody v-for="transaction in transactions">
+                    <tbody>
+                        {% for transaction in content["transactionHist"][:8] -%}
                         <tr>
-                            <td>{[transaction.drban]}</td>
-                            <td><span :class="{'text-success': transaction.crban == bankID, 'text-danger': transaction.crban != bankID}">{[transaction.txn_amt]}</span></td>
-                            <td>{[transaction.txn_time]}</td>
-                          </tr>
+                            <td>{{transaction.drban}}</td>
+                            <td><span>{{transaction.txn_amt}}</span></td>
+                            <td>{{transaction.txn_time}}</td>
+                        </tr>
+                        {%- endfor %}
                     </tbody>
                 </table>
-
             </div>
     
-            <div class="col border shadow p-3 border rounded-4 h-100">
+            <!-- <div class="col-6 border shadow p-3 border rounded-4 h-100">
                 <h5>SplitPay</h5>
-            </div>
+            </div> -->
         </div>
     </div>
 {% endblock %}

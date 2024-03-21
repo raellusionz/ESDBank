@@ -6,7 +6,6 @@ const main = Vue.createApp({
           transactions: {},
           month: 0,
           month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          accountBalance: "",
           balanceChange: 0,
           moneyIn: 0,
           moneyOut: 0,
@@ -42,9 +41,7 @@ const main = Vue.createApp({
     .then(data => {
       transactions = data.data
       this.transactions = transactions.slice(0,8)
-      // console.log(this.transactions);
       for (const transaction of transactions) {
-        console.log(transaction);
         txnDate = new Date(transaction.txn_time)
         txnMonth = txnDate.getMonth();
         if (txnMonth == this.month) {
@@ -58,22 +55,6 @@ const main = Vue.createApp({
         }
       }
       this.balanceChange = this.moneyIn - this.moneyOut
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-    
-    fetch('/getAccountBalance', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({bankID: this.bankID}),
-    })
-    .then(response => response.json())
-    .then(data => {
-      this.accountBalance = data.data.acct_balance
-      // console.log(this.accountBalance);
     })
     .catch((error) => {
       console.error('Error:', error);
