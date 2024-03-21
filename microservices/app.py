@@ -44,5 +44,6 @@ def transferFundsFromUI():
     result = invoke_http("http://127.0.0.1:5100/transfer_funds", method='POST', json=request_data)
     return result
 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4999, debug=True)
