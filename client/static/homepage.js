@@ -11,7 +11,6 @@ quickTransferForm.addEventListener('submit', (event) => {
 
 
 
-
 fetch('/getTransactionHist', {
   method: 'POST',
   headers: {
