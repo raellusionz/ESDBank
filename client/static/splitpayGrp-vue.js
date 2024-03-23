@@ -4,6 +4,7 @@ const main = Vue.createApp({
     data() {
         return {
             members: ['Chi', 'Sophie', 'Sarah'],
+            group: "Phuket Trip",
             selectedMembers: [],
             paymentDescription: '',
             totalAmount: null,
