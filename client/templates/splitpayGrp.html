@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="text-center p-3">
+        <h2>Phuket Trip</h2>
+        <ul class="list-group w-75 mx-auto">
+            <li class="list-group-item"><b>Members</b></li>
+            <li class="list-group-item">Chi</li>
+            <li class="list-group-item">Sophie</li>
+            <li class="list-group-item">Sarah</li>
+          </ul>
+    </div>
+    <div class="container-fluid text-center">
+        <button class="btn btn-light border border-primary text-primary m-3">Add new payment</button>
+    </div>
+    <div class="p-3">
+        <h4>Requested Payments</h4>
+        <table class="table">
+            <tr>
+                <td>
+                    Sophie requests $10
+                </td>
+                <td class="text-end">
+                    <span>
+                        <button type="button" class="btn btn-success">Accept</button>
+                        <button type="button" class="btn btn-danger">Decline</button>
+                    </span>
+                </td>
+            </tr>
+            <tr>            
+                <td>
+                    Sarah requests $8
+                </td>
+                <td class="text-end">
+                    <span>
+                        <button type="button" class="btn btn-success">Accept</button>
+                        <button type="button" class="btn btn-danger">Decline</button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="p-3">
+        <h4>Past payments</h4>
+        <table class="table">
+            <tr>
+                <td>Chi transferred Sophie $2</td>
+            </tr>
+            <tr>            
+                <td>Sophie transferred Sarah $2</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

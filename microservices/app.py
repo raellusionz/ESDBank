@@ -52,7 +52,11 @@ def roboadvisor():
 
 @app.route("/splitpay")
 def splitpay():
-    return render_template("splitpay.html")
+    return render_template("splitpay2.html")
+
+@app.route("/splitpay/group")
+def splitpayGrp():
+    return render_template("splitpayGrp.html")
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -70,7 +74,6 @@ def transferFundsFromUI():
     request_data = request.get_json()
     result = invoke_http("http://127.0.0.1:5100/transfer_funds", method='POST', json=request_data)
     return result
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4999, debug=True)
