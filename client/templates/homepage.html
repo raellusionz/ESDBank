@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="py-3" id="main">
+    <div class="py-3">
         <div class="row">
             <div class="col-2 d-flex flex-column w-25">
                 <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
@@ -85,6 +85,5 @@
 {% endblock %}
 
 {% block scriptsCall %}
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="{{ url_for('static', filename='homepage-vue.js') }}"></script>
 {% endblock %}
