@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="text-center p-3">
-        <h2>Phuket Trip</h2>
+        <h2>{[group]}</h2>
         <ul class="list-group w-75 mx-auto">
             <li class="list-group-item"><b>Members</b></li>
             <li class="list-group-item" v-for="member in members">{[member]}</li>
