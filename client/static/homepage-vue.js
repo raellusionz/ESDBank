@@ -9,10 +9,10 @@ const main = Vue.createApp({
           balanceChange: 0,
           moneyIn: 0,
           moneyOut: 0,
-          bankID: "123456789012",
+          // bankID: "123456789012",
           form: {
-            receiver: "",
-            amount: "",
+            recipientPhoneNumber: "",
+            transactionAmount: "",
             category: "",
           }
       };
@@ -21,7 +21,27 @@ const main = Vue.createApp({
   // Methods
   methods: {
     submit() {
-      console.log(this.form);
+      // Make AJAX POST request to Flask app
+      fetch('/transferFundsFromUI', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.form)
+      })
+      .then(response => {
+          if (response.ok) {
+              // Handle success response
+              alert('Transfer successful!');
+          } else {
+              // Handle error response
+              alert('Error occurred during transfer1.');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('Error occurred during transfer2.');
+      });
     }
   },
 
@@ -31,34 +51,31 @@ const main = Vue.createApp({
     this.month = date.getMonth()
 
     fetch('/getTransactionHist', {
-      method: 'POST',
+      method: 'GET', // Changed from 'POST' to 'GET'
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({bankID: this.bankID}),
+      }
     })
     .then(response => response.json())
     .then(data => {
-      transactions = data.data
-      this.transactions = transactions.slice(0,8)
+      let transactions = data.data;
+      this.transactions = transactions.slice(0,8);
       for (const transaction of transactions) {
-        txnDate = new Date(transaction.txn_time)
-        txnMonth = txnDate.getMonth();
+        let txnDate = new Date(transaction.txn_time);
+        let txnMonth = txnDate.getMonth();
         if (txnMonth == this.month) {
           if (transaction.crban == this.bankID) {
-            this.moneyIn += transaction.txn_amt
-
+            this.moneyIn += transaction.txn_amt;
           } else {
-            this.moneyOut -= transaction.txn_amt
-
+            this.moneyOut -= transaction.txn_amt;
           }
         }
       }
-      this.balanceChange = this.moneyIn - this.moneyOut
+      this.balanceChange = this.moneyIn - this.moneyOut;
     })
     .catch((error) => {
       console.error('Error:', error);
-    });
+    });    
   },
 })
 

@@ -15,7 +15,6 @@ def login():
         data = invoke_http("http://127.0.0.1:5000/userAccounts/user_email/" + email)
         data = json.dumps(data)
         userAccntDetails = json.loads(data)
-        print(userAccntDetails)
         bankID = userAccntDetails["data"]["bank_acct_id"]
         session["bankID"] = bankID
         return redirect(url_for("home"))
@@ -29,12 +28,7 @@ def home():
         bankID = session["bankID"]
         transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
         accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
-        # print(data)
-        # data = json.dumps(data)
-        # accountBalance = json.loads(data)
-        print(accountBalance)
         content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data']}
-        # print(content)
         return render_template("homepage.html", content=content)
     else:
         print("redirecting to login again")
@@ -42,7 +36,7 @@ def home():
 
 @app.route("/getTransactionHist", methods=['POST'])    
 def getTransactionHist():
-    bankID = request.json['bankID']
+    bankID = session["bankID"]
     transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
     return transactionHist
 
@@ -72,6 +66,8 @@ def webhook():
 @app.route("/transferFundsFromUI", methods=['POST'])    
 def transferFundsFromUI():
     request_data = request.get_json()
+    # Add the 'senderBAN' key with its value to the request_data dictionary
+    request_data['senderBAN'] = session["bankID"]
     result = invoke_http("http://127.0.0.1:5100/transfer_funds", method='POST', json=request_data)
     return result
 
