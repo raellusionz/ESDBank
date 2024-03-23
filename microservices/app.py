@@ -34,7 +34,7 @@ def home():
         print("redirecting to login again")
         return redirect(url_for("login"))
 
-@app.route("/getTransactionHist", methods=['POST'])    
+@app.route("/getTransactionHist")    
 def getTransactionHist():
     bankID = session["bankID"]
     transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
