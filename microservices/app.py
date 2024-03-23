@@ -52,7 +52,7 @@ def roboadvisor():
 
 @app.route("/splitpay")
 def splitpay():
-    return render_template("splitpay2.html")
+    return render_template("splitpay.html")
 
 @app.route("/splitpay/group")
 def splitpayGrp():
