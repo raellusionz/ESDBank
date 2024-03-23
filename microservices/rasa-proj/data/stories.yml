@@ -28,3 +28,8 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+- story: provide financial advice story
+  steps:
+  - intent: request_financial_advice
+  - action: action_provide_financial_advice

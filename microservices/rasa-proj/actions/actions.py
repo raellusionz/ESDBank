@@ -25,12 +25,9 @@
 #         dispatcher.utter_message(text="Hello World!")
 #
 #         return []
-from invokes import invoke_http
 from rasa_sdk import Action
 from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
-
-
 
 class ActionProvideFinancialAdvice(Action):
 
@@ -39,7 +36,52 @@ class ActionProvideFinancialAdvice(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker, domain):
         bankId = 123456789012
-        transaction_hist_db = invoke_http()
+        transaction_hist_db = {
+            "code": 200,
+            "data": [
+                {
+                    "crban": "123456789012",
+                    "drban": "234567890123",
+                    "txn_amt": 239.0,
+                    "txn_id": 1,
+                    "category": "Income",
+                    "txn_time": "2024-02-01 00:00:01"
+                },
+                {
+                    "crban": "234567890123",
+                    "drban": "123456789012",
+                    "txn_amt": 123.0,
+                    "txn_id": 2,
+                    "category": "Necessities",
+                    "txn_time": "2024-02-01 12:30:01"
+                },
+                {
+                    "crban": "234567890123",
+                    "drban": "123456789012",
+                    "txn_amt": 153.0,
+                    "txn_id": 3,
+                    "category": "Shopping & Entertainment",
+                    "txn_time": "2024-02-02 00:00:01"
+                },
+                {
+                    "crban": "234567890123",
+                    "drban": "123456789012",
+                    "txn_amt": 142.0,
+                    "txn_id": 4,
+                    "category": "Funds Transfer",
+                    "txn_time": "2024-02-02 10:00:01"
+                },
+                {
+                    "crban": "234567890123",
+                    "drban": "123456789012",
+                    "txn_amt": 1.0,
+                    "txn_id": 28,
+                    "category": "Others",
+                    "txn_time": "2024-03-12 18:24:21"
+                }
+            ]
+        }
+        transaction_hist = transaction_hist_db["data"]
 
         user_goals = {
         "goals": {
