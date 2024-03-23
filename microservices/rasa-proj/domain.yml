@@ -8,6 +8,10 @@ intents:
   - mood_great
   - mood_unhappy
   - bot_challenge
+  - request_financial_advice
+
+actions:
+- action_provide_financial_advice
 
 responses:
   utter_greet:
