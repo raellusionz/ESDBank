@@ -134,12 +134,12 @@ def get_expenditure_percent(id_num):
                 "data": {
                     "expanditure_target_percent": necessity_expenditure_percentage,
                     "breakdown": {
-                        "fund_transfer": fund_transfer,
-                        "necessities": necessities,
-                        "transportation": transportation,
-                        "f_b": f_b,
-                        "shop_entertain": shop_entertain,
-                        "others": others
+                        "Fund Transfer": fund_transfer,
+                        "Necessities": necessities,
+                        "Transportation": transportation,
+                        "Food & Drink": f_b,
+                        "Shopping & Entertainment": shop_entertain,
+                        "Others": others
                     }
                 }
             }

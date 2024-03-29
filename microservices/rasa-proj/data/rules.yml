@@ -7,7 +7,27 @@ rules:
   - intent: goodbye
   - action: utter_goodbye
 
+- rule: Say hello anytime the user says hello
+  steps:
+  - intent: greet
+  - action: utter_greet
+
 - rule: Say 'I am a bot' anytime the user challenges
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
+
+- rule: Generate bank statement
+  steps:
+  - intent: request_bank_statement
+  - action: action_generate_bank_statement
+
+- rule: Generate financial advice
+  steps:
+  - intent: request_financial_advice
+  - action: action_provide_financial_advice
+
+- rule: Reply 'Thank You's
+  steps:
+  - intent: thanks
+  - action: utter_welcome
