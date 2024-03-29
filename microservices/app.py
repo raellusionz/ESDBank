@@ -20,6 +20,11 @@ def login():
         return redirect(url_for("home"))
     else:
         return render_template("login.html")
+    
+@app.route("/signout", methods=["GET"])
+def signout():
+    session.pop("user", None)
+    return redirect(url_for("login"))
 
 @app.route("/home")
 @app.route("/")
@@ -29,7 +34,7 @@ def home():
         transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
         print(transactionHist)
         accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
-        content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data']}
+        content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data'], "bankID": bankID}
         return render_template("homepage.html", content=content)
     else:
         print("redirecting to login again")
