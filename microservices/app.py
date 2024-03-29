@@ -27,6 +27,7 @@ def home():
     if "bankID" in session:
         bankID = session["bankID"]
         transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
+        print(transactionHist)
         accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
         content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data']}
         return render_template("homepage.html", content=content)
@@ -54,10 +55,19 @@ def splitpayGrp():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    bankID = session["bankID"]
     user_message = request.json['message']
 
     # Here, you could add logic to generate a response to the message
-    rasa_response = requests.post(RASA_API_URL, json={'message': user_message})
+    print(bankID)
+    payload = {
+        "message": user_message,
+        "metadata": {
+            "bankID": str(bankID)  # Converting the integer to a string
+        }
+    }
+    print(payload)
+    rasa_response = requests.post(RASA_API_URL, json=payload)
     rasa_response_json = rasa_response.json()
 
     bot_response = rasa_response_json[0]['text'] if rasa_response_json else 'Sorry, I didn\'t understand that.'
