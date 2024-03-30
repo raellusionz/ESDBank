@@ -48,15 +48,21 @@ def getTransactionHist():
 
 @app.route("/roboadvisor")
 def roboadvisor():
-    return render_template("roboadvisor.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("roboadvisor.html", content=content)
 
 @app.route("/splitpay")
 def splitpay():
-    return render_template("splitpay.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("splitpay.html", content=content)
 
 @app.route("/splitpay/group")
 def splitpayGrp():
-    return render_template("splitpayGrp.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("splitpayGrp.html", content=content)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
