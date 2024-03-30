@@ -21,6 +21,9 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              <div>
+                <input type="text" class="form-control mb-3" placeholder="Enter Group Name" aria-label="grpName" aria-describedby="basic-addon1" v-model="groupName">
+              </div>
               <p>Invite:</p>
               <div v-show="phoneNums">
                 <!-- display keyed phone number heres -->
