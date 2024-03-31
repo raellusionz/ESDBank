@@ -28,7 +28,7 @@ const main = Vue.createApp({
                 chatBox.appendChild(userMessageDiv);
                 
                 const botResponseDiv = document.createElement('div');
-                botResponseDiv.textContent = `Finley: ${data.response}`;
+                botResponseDiv.innerHTML = `Finley: ${data.response}`;
                 chatBox.appendChild(botResponseDiv);
                 
                 inputField.value = '';

@@ -20,6 +20,11 @@ def login():
         return redirect(url_for("home"))
     else:
         return render_template("login.html")
+    
+@app.route("/signout", methods=["GET"])
+def signout():
+    session.pop("user", None)
+    return redirect(url_for("login"))
 
 @app.route("/home")
 @app.route("/")
@@ -27,8 +32,9 @@ def home():
     if "bankID" in session:
         bankID = session["bankID"]
         transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
+        print(transactionHist)
         accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
-        content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data']}
+        content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data'], "bankID": bankID}
         return render_template("homepage.html", content=content)
     else:
         print("redirecting to login again")
@@ -42,22 +48,37 @@ def getTransactionHist():
 
 @app.route("/roboadvisor")
 def roboadvisor():
-    return render_template("roboadvisor.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("roboadvisor.html", content=content)
 
 @app.route("/splitpay")
 def splitpay():
-    return render_template("splitpay.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("splitpay.html", content=content)
 
 @app.route("/splitpay/group")
 def splitpayGrp():
-    return render_template("splitpayGrp.html")
+    bankID = session["bankID"]
+    content = {"bankID": bankID}
+    return render_template("splitpayGrp.html", content=content)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    bankID = session["bankID"]
     user_message = request.json['message']
 
     # Here, you could add logic to generate a response to the message
-    rasa_response = requests.post(RASA_API_URL, json={'message': user_message})
+    print(bankID)
+    payload = {
+        "message": user_message,
+        "metadata": {
+            "bankID": str(bankID)  # Converting the integer to a string
+        }
+    }
+    print(payload)
+    rasa_response = requests.post(RASA_API_URL, json=payload)
     rasa_response_json = rasa_response.json()
 
     bot_response = rasa_response_json[0]['text'] if rasa_response_json else 'Sorry, I didn\'t understand that.'
