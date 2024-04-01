@@ -11,12 +11,9 @@ An web application that aims to mimic a bank online service. It caters to three 
 2. Splitting share bills between users 
 3. An AI powered chatbot to provide advice on users' spending
 
-# links
-Deployed Website: <br>
-Git Repo: <br>
-Youtube Demostration: <br>
-If using Github: <br>
-If launching code from submitted files: <br>
+# Links
+Deployed Website: esdbankapp.vercel.app <br>
+Git Repo: https://github.com/raellusionz/ESDBank <br>
 
 # Tech Stacks
 Front end:
@@ -28,10 +25,10 @@ Front end:
   - Vue.js
 
 Back end:
-- Local REST API and axios to retrieve data from database
+- 
 
 Database:
-- Hosted on Microsoft Azure 
+- 
 
 APIs used:
 1. 
