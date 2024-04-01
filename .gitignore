@@ -4,6 +4,7 @@ node_modules
 # Virtual environment
 venv/
 .env/
+venvv/
 
 # Python cache files
 __pycache__/
@@ -43,3 +44,5 @@ endpoints_local.yml
 
 # VS Code settings
 .vscode/
+
+.DS_Store
