@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 import psycopg2
 import os
-from sqlalchemy import BigInteger, or_, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import BigInteger, and_, ForeignKey, PrimaryKeyConstraint
 from datetime import datetime
 
 app = Flask(__name__)
@@ -315,7 +315,7 @@ def insertSplitPaymentDetails():
     if request.is_json:
         split_payment_details = request.get_json()
         result = processSplitPaymentDetails(split_payment_details)
-        return result#, result["code"]
+        return result, result["code"]
     else:
         data = request.get_data()
         print("Received invalid split payment details:")
@@ -349,13 +349,16 @@ def processSplitPaymentDetails(details):
                 }
 
     # retrieve list of group members in this specific group_id
-    requested_members_list = db.session.scalars(db.select(members).filter_by(group_id=group_id)).all()
+    requested_members_list = db.session.scalars(db.select(members)
+                                                .filter(
+                                                    and_(members.group_id == group_id,
+                                                         members.member_hp != requester_phone_num))).all()
 
     # retrieve req_id
     created_req_id = new_request.req_id
 
     # calculate the split amount to pay
-    indiv_amount = amount_to_split/(len(requested_members_list)-1)
+    indiv_amount = amount_to_split/(len(requested_members_list))
 
     # store created_requested_member_list
     created_requested_member_list = []

@@ -84,7 +84,7 @@ def processSplitPayment(details):
 
     print('split_payment_details_result:', split_payment_details_result)
 
-
+    message = json.dumps(split_payment_details_result)
     # Check the split payment details request result; if a failure, send it to the error microservice.
     code = split_payment_details_result["code"] 
     if code not in range(200, 300):

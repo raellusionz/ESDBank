@@ -153,7 +153,7 @@ def processCreateGroup(details):
                         }
 
     group_details_result = invoke_http(group_details_URL, method="POST", json=group_details_full)
-
+    message = json.dumps(group_details_result)
     print('group_details_result:', group_details_result)
 
 
