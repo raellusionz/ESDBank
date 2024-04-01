@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 import psycopg2
 import os
-from sqlalchemy import BigInteger, or_, ForeignKey
+from sqlalchemy import BigInteger, or_, ForeignKey, PrimaryKeyConstraint
 from datetime import datetime
 
 app = Flask(__name__)
@@ -69,7 +69,7 @@ class split_requests(db.Model):
     __tablename__ = 'sp_split_requests'
 
     req_id = db.Column(BigInteger, primary_key=True, autoincrement = True)
-    group_id = db.Column(BigInteger, ForeignKey('sp_group_details_db.group_id'))
+    group_id = db.Column(db.Integer, ForeignKey('sp_group_details_db.group_id'))
     total_req_amount = db.Column(db.DECIMAL(15,2), nullable=False)
     requester_phone_num = db.Column(db.Integer, nullable=False)
     req_date_time = db.Column(db.String(100))
@@ -93,12 +93,15 @@ class split_requests(db.Model):
 class requested_users(db.Model):
     __tablename__ = 'sp_requested_user'
 
-    req_id = db.Column(BigInteger, ForeignKey('sp_split_requests.req_id'))
-    userban = db.Column(db.String(20), primary_key=True)
+    req_id = db.Column(db.Integer, ForeignKey('sp_split_requests.req_id'))
+    userban = db.Column(db.String(20))
     indiv_req_amount = db.Column(db.DECIMAL(15,2), nullable=False)
     status = db.Column(db.String(10))
     resp_date_time = db.Column(db.String(100))
 
+    __table_args__ = (
+        PrimaryKeyConstraint('req_id', 'userban'),
+    )
 
     def __init__(self, req_id, userban, indiv_req_amount, status, resp_date_time):
         self.req_id = req_id
@@ -229,7 +232,7 @@ def insertGroupDetails():
     if request.is_json:
         group_details = request.get_json()
         result = processGroupDetails(group_details)
-        return result#, result["code"]
+        return result, result["code"]
     else:
         data = request.get_data()
         print("Received invalid group details:")
@@ -264,7 +267,8 @@ def processGroupDetails(details):
     
     # retrieve group_id
     created_group_id = new_group.group_id
-    
+    print("This Works THOUGHHH")
+    print(created_group_id)
     # store members in list
     created_members_list = []
 
@@ -283,8 +287,8 @@ def processGroupDetails(details):
                                 member_fullname=member_fullname,
                                 member_email=member_email)
         try:
-            db.session.add(new_member)    
-            db.session.commit()
+            db.session.add(new_member)   
+            db.session.commit() 
             created_members_list.append(new_member)
 
         except:
@@ -294,6 +298,7 @@ def processGroupDetails(details):
                 "message": "An error occurred logging the group members."
                 }
 
+    print(created_members_list)
 
     return  {
             "code": 201,
@@ -344,58 +349,60 @@ def processSplitPaymentDetails(details):
                 }
 
     # retrieve list of group members in this specific group_id
-    members_list = db.session.scalars(db.select(requested_users)).all()
+    requested_members_list = db.session.scalars(db.select(members).filter_by(group_id=group_id)).all()
 
-    if len(requested_members_list):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "requested_member": [requested_member.json() for requested_member in requested_members_list]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no requested members in any groups."
-        }
-    ), 404
+    # retrieve req_id
+    created_req_id = new_request.req_id
 
+    # calculate the split amount to pay
+    indiv_amount = amount_to_split/(len(requested_members_list)-1)
 
-    # create member records using created group_id
-    for i in range(-1, len(member_details_dict)-1, 1):
-        member_ban = member_details_dict[str(i)]["data"]["bank_acct_id"]
-        member_hp = member_details_dict[str(i)]["data"]["user_hp"]
-        member_fullname = member_details_dict[str(i)]["data"]["user_fullname"]
-        member_email = member_details_dict[str(i)]["data"]["user_email"]   
+    # store created_requested_member_list
+    created_requested_member_list = []
 
-        # create and add member record
-        new_member = members(group_id=created_group_id,
-                                member_ban=member_ban,
-                                group_name=group_name,
-                                member_hp=member_hp,
-                                member_fullname=member_fullname,
-                                member_email=member_email)
-        try:
-            db.session.add(new_member)    
-            db.session.commit()
-            created_members_list.append(new_member)
+    # create requested_member records using submitted group_id
+    for requested_member in requested_members_list:
+        if requested_member.member_hp == requester_phone_num:
+            pass
+        else:
+            member_ban = requested_member.member_ban
 
-        except:
-            return  {
-                "code": 500,
-                "data": request.get_json(),
-                "message": "An error occurred logging the group members."
-                }
+            # create and add member record
+            new_requested_member = requested_users(req_id=created_req_id,
+                                                    userban=member_ban,
+                                                    indiv_req_amount=indiv_amount,
+                                                    status="pending",
+                                                    resp_date_time=None
+                                                    )
+
+            try:
+                db.session.add(new_requested_member)   
+                db.session.commit()
+                created_requested_member_list.append(new_requested_member)
+
+            except Exception as e:
+                # Log the error
+                print(f"Error occurred while creating requested member: {e}")
 
 
-    return  {
+    if created_requested_member_list:
+        return {
             "code": 201,
-            "message": "Group successfully created and members successfully added.",
-            "data": {"created_group": new_group.json(), "added_members": [member.json() for member in created_members_list]}
+            "message": "Split_request successfully created and requested_members successfully stored.",
+            "data": {
+                "created_split_request": new_request.json(),
+                "created_requested_members": [requested_member.json() for requested_member in created_requested_member_list],
+                "requested_members_details": [member.json() for member in requested_members_list],
+                "request_amount": indiv_amount,
+                "datetime": req_datetime
             }
+        }
 
+    return {
+        "code": 500,
+        "data": request.get_json(),
+        "message": f"An error occurred logging the split_request or requested_members for this split request id:{created_req_id}."
+    }
 
 if __name__ == '__main__':
     # app.run(port=5000, debug=True)

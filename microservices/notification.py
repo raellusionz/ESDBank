@@ -5,7 +5,7 @@
 from enum import Enum
 
 import sys
-from email_functions import sendEmail, sendEmail2
+from email_functions import sendCreateGroupNotif, sendSplitRequestNotif, sendTransferFundsNotif
 
 import amqp_connection
 import json
@@ -44,9 +44,11 @@ def callback(channel, method, properties, body): # required signature for the ca
     try:
         payload = json.loads(body)
         notification_type = payload["notification_type"]
-
+        print(notification_type)
         if notification_type and notification_type == "create_group":
             processCreateGroupNotification(payload["data"])
+        elif notification_type and notification_type == "split_request":
+            processSplitRequestNotification(payload["data"])
         else:
             processTransferFundsNotification(payload)
     
@@ -54,8 +56,49 @@ def callback(channel, method, properties, body): # required signature for the ca
         print("Error decoding JSON:", e)
     print()
 
+def processSplitRequestNotification(details):
+    print("Processing SplitRequest notification details:")
+    print(details)
+
+    requesterName = details["requester_fullname"]
+    payerName = details["requested_user_fullname"]
+    payerEmail = details["requested_user_email"]
+    requestAmount = details["indiv_req_amount"]
+    groupName = details["group_name"]
+    requestDateTime = details["reqDateTime"]
+    print()  # print a new line feed as a separator
+
+    try:
+        sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, groupName, requestDateTime)
+        result = {
+                "code": 201,
+                "message": "Notification mails of split request successfully sent to requested users."
+                }
+        code = result["code"]
+        message = json.dumps(result)
+
+    except:
+        result = {
+                "code": 500,
+                "message": "An error occurred sending the notification emails of split request."
+                }
+        code = result["code"]
+        message = json.dumps(result)
+
+        print('\n\n-----Publishing the (notification error) message with routing_key=notification.error-----')
+        channel.basic_publish(exchange=exchangename, routing_key="notification.error", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2))
+        print("\nNotification MS status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), result)
+        
+    else:
+        print('\n\n-----Publishing the (notification activity) message with routing_key=notification.activity-----')
+        channel.basic_publish(exchange=exchangename, routing_key="notification.activity", 
+                body=message)
+        print("\nNotification activity published to the RabbitMQ Exchange.")
+
 def processCreateGroupNotification(details):
-    print("Processing notification details:")
+    print("Processing CreateGroup notification details:")
     print(details)
 
     inviter = details["inviter"]
@@ -65,7 +108,7 @@ def processCreateGroupNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendEmail2(inviter, invitee, email, group_name)
+        sendCreateGroupNotif(inviter, invitee, email, group_name)
         result = {
                 "code": 201,
                 "message": "Notification mails of group invite successfully sent."
@@ -94,7 +137,7 @@ def processCreateGroupNotification(details):
         print("\nNotification activity published to the RabbitMQ Exchange.")
 
 def processTransferFundsNotification(details):
-    print("Processing notification details:")
+    print("Processing transferFunds notification details:")
     print(details)
 
     senderFullname = str(details["data"]["senderFullname"])
@@ -109,8 +152,8 @@ def processTransferFundsNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendEmail(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
-        sendEmail(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
+        sendTransferFundsNotif(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
+        sendTransferFundsNotif(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
         result = {
                 "code": 201,
                 "message": "Notification mails of fund transferral successfully sent."

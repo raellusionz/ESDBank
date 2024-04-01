@@ -159,12 +159,11 @@ def processTransferFunds(details):
 
     # Store bank_accounts_result['data'] as a variable
     json_data = bank_accounts_result['data']
-    # Parse the JSON data into a Python dictionary
-    data_dict = json.loads(json_data)
-    # Add category key-value pair
-    data_dict['category'] = category
-    # Convert modified dictionary back to JSON
-    json_with_category = json.dumps(data_dict)
+    # Add category into the json_data dictionary
+    json_data["category"] = category
+    transaction_history_result = invoke_http(
+        transaction_history_URL, method="POST", json=json_data)
+    print("transaction_history_result:", transaction_history_result, '\n')
 
     transaction_history_result = invoke_http(
         transaction_history_URL, method="POST", json=json_with_category)

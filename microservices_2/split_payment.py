@@ -121,32 +121,35 @@ def processSplitPayment(details):
     # continue even if this invocation fails
 
 
-    # 9. Send the relevant info {senderFullname, recipientFullname, senderEmail, recipientEmail} to notification microservice
+    # 2. Send the relevant info {senderFullname, recipientFullname, senderEmail, recipientEmail} to notification microservice
     # Invoke the notification microservice
-    # print('\n\n-----Invoking notification microservice-----')
+    print('\n\n-----Invoking notification microservice-----')
 
-    # print('\n\n-----Publishing the (notification details) message with routing_key=notification.details-----')
-    # for i in range(0,len(member_details_dict)-1,1):
-    #     data = {
-    #         "data": {
-    #             "inviter": curr_user_fullname,
-    #             "invitee": member_details_dict[i]["data"]["user_fullname"],
-    #             "email": member_details_dict[i]["data"]["user_email"],
-    #             "group_name": group_name
-    #             },
-    #         "notification_type": "create_group"
-    #         }    
-    #     message = json.dumps(data)
-    #     channel.basic_publish(exchange=exchangename, routing_key="notification.details", body=message)
+    print('\n\n-----Publishing the (notification details) message with routing_key=notification.details-----')
+    requested_members_list = split_payment_details_result["data"]["requested_members_details"]
+    for requested_member in requested_members_list:
+        data = {
+            "data": {
+                "requested_user_fullname": requested_member["member_fullname"],
+                "requested_user_email": requested_member["member_email"],
+                "requester_fullname": curr_user_fullname,
+                "group_name": requested_member["group_name"],
+                "indiv_req_amount": split_payment_details_result["data"]["request_amount"],
+                "reqDateTime": split_payment_details_result["data"]["datetime"]
+                },
+            "notification_type": "split_request"
+            }
+        message = json.dumps(data)
+        channel.basic_publish(exchange=exchangename, routing_key="notification.details", body=message)
 
-    # # 10. Return successful group creation results
-    # return {
-    #     "code": 201,
-    #     "data": {
-    #         "group_details_result": group_details_result,
-    #     }
-
-    # }
+    # 3. Return successful split_request creation results
+    return {
+        "code": 201,
+        "data": {
+            "split_request_result": split_payment_details_result["data"]["created_split_request"],
+            "requested_member_result": split_payment_details_result["data"]["created_requested_members"]
+            }
+        }
 
 
 # Execute this program if it is run as a main script (not by 'import')
