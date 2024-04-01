@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="text-center p-3">
+        <h2>{{content["groupName"]}}</h2>
+        <ul class="list-group w-75 mx-auto">
+            <li class="list-group-item"><b>Members</b></li>
+            <li class="list-group-item" v-for="member in members">{[member]}</li>
+          </ul>
+    </div>
+    <div class="container-fluid text-center">
+        <button class="btn btn-light border border-primary text-primary m-3" data-bs-toggle="modal" data-bs-target="#addNewPayment">Add new payment</button>
+    </div>
+    <!-- modal pop up -->
+    <div class="modal" tabindex="-1" id="addNewPayment">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add new payment</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="text-center p-3" @submit.prevent="addPayment">
+                <div class="modal-body">
+                    Members
+                    <hr>
+                    <!-- Checkboxes for Group Members -->
+                    <div v-for="(member, index) in members" :key="index" class="text-start m-1">
+                        <input type="checkbox" :id="member" v-model="selectedMembers" :value="member">
+                        <label :for="member" class="m-1">{[ member ]}</label>
+                    </div>
+                    <hr>
+                    <!-- Payment Details -->
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Payment Description" v-model="paymentDescription">
+                    </div>
+                    <div class="mb-3">
+                        <input type="number" class="form-control" placeholder="Total Amount" v-model.number="totalAmount">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <div class="p-3">
+        <h4>Requested Payments</h4>
+        <table class="table">
+            <tr v-for="request in requests">
+                <td>
+                    {[request.requester]} requests ${[request.amount]}
+                </td>
+                <td class="text-end">
+                    <span>
+                        <button type="button" class="btn btn-success mx-1" @click="accept">Accept</button>
+                        <button type="button" class="btn btn-danger mx-1" @click="decline">Decline</button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="p-3">
+        <h4>Past payments</h4>
+        <table class="table">
+            <tr v-for="pastPayment in pastPayments">
+                <td>{[pastPayment.sender]} transferred {[pastPayment.receiver]} ${[pastPayment.amount]}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scriptsCall %}
+    <script src="{{ url_for('static', filename='splitpayGrp-vue.js') }}"></script>
+{% endblock %}

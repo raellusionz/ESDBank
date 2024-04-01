@@ -3,6 +3,7 @@ from dotenv import dotenv_values
 
 mailer = emails.NewEmail(dotenv_values('../.env.development.local')['EMAIL_API'])
 
+
 def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDate, transactionID, content):
 
     # define an empty dict to populate with mail values

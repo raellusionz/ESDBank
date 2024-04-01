@@ -1,0 +1,114 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: thanks
+  examples: |
+    - thank you
+    - thanks
+    - thanks a lot
+    - thank you so much
+    - much appreciated
+    - thanks for your help
+    - thanks for helping out
+    - I appreciate it
+    - I appreciate your help
+    - thank you for everything
+    - thanks for everything
+    - thank you very much
+    - many thanks
+    - I'm grateful
+    - gratitude
+    - so thankful
+    - really appreciate it
+    - appreciate your assistance
+    - thankful for your help
+    - cheers
+    - my thanks
+    - my sincere thanks
+    - I can't thank you enough
+    - thanks a bunch
+    - thanks a million
+    - you're a lifesaver, thank you
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+- intent: request_financial_advice
+  examples: |
+    - Can you give me some advice on how to save money?
+    - I need tips on managing my finances better.
+    - How can I reduce my spending?
+    - I'm looking for advice on spending.    
+    - I'm looking for advice on my finances.
+    - Can you suggest how to cut down on unnecessary expenses?
+    - What strategies are there for increasing my savings rate?
+    - I need help setting financial budget. Can you assist?
+    - How do I start creating a budget?
+    - Show me ways to improve my financial health.
+
+- intent: request_bank_statement
+  examples: |
+    - Can I see my bank statement?
+    - I'd like to review my bank statement.
+    - Could you show me my bank transactions?
+    - I want to check my recent transactions.
+    - Show me my bank statement, please.
+    - Where can I find my transaction history?
+    - How can I access my bank statement?
+    - Can you provide me with a summary of my recent spending?
+    - Please, I need to see my transaction history.
+    - I'm looking to get my latest bank statement.
+    - Can you display my recent banking transactions?
+    - Show me a summary of my financial transactions.

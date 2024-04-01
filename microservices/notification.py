@@ -5,6 +5,7 @@
 from enum import Enum
 
 import sys
+
 from email_functions import sendTransferFundsNotif, sendCreateGroupNotif
 
 import amqp_connection
@@ -65,6 +66,7 @@ def processCreateGroupNotification(details):
     print()  # print a new line feed as a separator
 
     try:
+
         sendCreateGroupNotif(inviter, invitee, email, group_name)
         result = {
                 "code": 201,

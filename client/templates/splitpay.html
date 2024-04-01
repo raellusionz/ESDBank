@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+    <h3 class="p-3"> Groups </h3>
+    <div class="d-grid gap-2 mx-auto">
+      {% for group in content["groups"] -%}
+        <a href="{{ url_for('splitpayGrp', groupName=group['group_name'], groupID=group['group_id']) }}" class="btn btn-light">
+        {{group['group_name']}}
+        </a>
+      {%- endfor %}
+    </div>
+    <div class="container-fluid text-center">
+        <button class="btn btn-light border border-primary text-primary m-3" data-bs-toggle="modal" data-bs-target="#createGrpModal">Add new group</button>
+    </div>
+    <!-- modal pop up -->
+    <div class="modal" tabindex="-1" id="createGrpModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add new group</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div>
+                <input type="text" class="form-control mb-3" placeholder="Enter Group Name" aria-label="grpName" aria-describedby="basic-addon1" v-model="newGroupName">
+              </div>
+              <p>Invite:</p>
+              <div v-show="phoneNums">
+                <!-- display keyed phone number heres -->
+                <table>
+                  <tbody>
+                    <tr v-for="phoneNum in phoneNums">
+                      <td>{[phoneNum]}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <form class="text-center p-3" @submit.prevent="addPhoneNum">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Enter Invitee's phone number here" aria-label="keyedPhoneNum" aria-describedby="basic-addon1" v-model="keyedPhoneNum">
+                </div>
+                <button class="btn btn-light">Add +</button>
+              </form>
+              <span v-show="notValid">Please Enter valid phone number</span>              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" @click="createGrp">Create</button>
+            </div>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scriptsCall %}
+    <script src="{{ url_for('static', filename='splitpay-vue.js') }}"></script>
+{% endblock %}

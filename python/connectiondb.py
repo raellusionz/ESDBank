@@ -1,4 +1,4 @@
-def specific_phone_number_connection(number):
+def specific_bank_connection(acct_number):
     import psycopg2
     
     DB_NAME = "verceldb"
@@ -16,14 +16,11 @@ def specific_phone_number_connection(number):
 
     # Creating a cursor
     cur = conn.cursor()
-    cur.execute("SELECT * FROM user_acct_details_db where user_hp =" + number )
-    rows = cur.fetchall()
-    for data in rows:
-        print(data)
-
+    cur.execute("SELECT * FROM bank_acct_details_db where bank_acct_id = '" + acct_number +"'" )
+    rows = cur.fetchone()
     print('Data fetched successfully')
     conn.close()
-
+    return rows[1]
 
 def transaction_log_month(acct_number,month):
     import psycopg2

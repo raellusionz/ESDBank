@@ -1,3 +1,48 @@
 .vercel
 node_modules
-.env.development.local
+
+# Virtual environment
+venv/
+.env/
+venvv/
+
+# Python cache files
+__pycache__/
+/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Rasa models
+models/
+# Temporary files created by Rasa
+tmp/
+
+# Logs
+logs/
+
+# Data
+data/
+
+# Configurations that may contain sensitive information
+config.yml
+credentials.yml
+endpoints.yml
+
+# Environment configuration files
+.env
+*.env.local
+
+# User-specific configuration files
+config_local.yml
+credentials_local.yml
+endpoints_local.yml
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+.DS_Store
