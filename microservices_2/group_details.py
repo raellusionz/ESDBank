@@ -200,6 +200,28 @@ def get_all_requested_members():
         }
     ), 404
 
+@app.route("/members/bank_acct_id/<string:id_num>")
+def get_member_groups_by_BAN(id_num):
+    groups_member_is_in_list = db.session.scalars(
+        db.select(members).filter_by(member_ban=id_num)
+        ).all()
+
+    if len(groups_member_is_in_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "groups_member_is_in": [group.json() for group in groups_member_is_in_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "The user does not belong to any groups."
+        }
+    ), 404
+
 @app.route("/group_details", methods=['POST'])
 def insertGroupDetails():
     # Check if the submitted details contains valid JSON

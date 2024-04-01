@@ -78,7 +78,7 @@ def processSplitPayment(details):
                             "requester_phone_num": curr_user_hp,
                             "group_id": group_id,
                             "req_amount": requested_amount
-                        }
+                            }
 
     split_payment_details_result = invoke_http(group_details_URL, method="POST", json=split_payment_details)
 
