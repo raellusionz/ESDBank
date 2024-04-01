@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="py-3" id="main">
+    <div class="py-3">
         <div class="row">
             <div class="col-2 d-flex flex-column w-25">
                 <div class="bg-primary text-light p-3 border rounded-4 mb-2 shadow">
                     <h5>Account Balance</h5>
-                    <h6>${[accountBalance]}</h6>
+                    <h6>${{content['accountBalance']['acct_balance']}}</h6>
                 </div>
                 <div class="p-3 shadow position-relative h-100 border rounded-4">
                     <h5>Money Insights</h5>
@@ -17,15 +17,15 @@
                         <tbody>
                             <tr>
                                 <td>Change in balance</td>
-                                <td>{[balanceChange]}</td>
+                                <td>{[balanceChange.toFixed(2)]}</td>
                             </tr>
                             <tr>
                                 <td>Money in</td>
-                                <td><span class="text-success">{[moneyIn]}</span></td>
+                                <td><span class="text-success">{[moneyIn.toFixed(2)]}</span></td>
                             </tr>
                             <tr>
                                 <td>Money out</td>
-                                <td><span class="text-danger">{[moneyOut]}</span></td>
+                                <td><span class="text-danger">{[moneyOut.toFixed(2)]}</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -38,11 +38,11 @@
                     <h5>Quick Transfer</h5>
                     <div class="mb-3">
                     <label for="phoneNumberBAN" class="form-label">Phone Number/ Bank Account Number</label>
-                    <input type="text" class="form-control" id="phoneNumberBAN" v-model="form.receiver">
+                    <input type="text" class="form-control" id="phoneNumberBAN" v-model="form.recipientPhoneNumber">
                     </div>
                     <div class="mb-3">
                     <label for="amount" class="form-label">Amount</label>
-                    <input type="text" class="form-control" id="amount" v-model="form.amount">
+                    <input type="text" class="form-control" id="amount" v-model="form.transactionAmount">
                     </div>
                     <div class="mb-3">
                     <label for="category" class="form-label">Category</label>
@@ -62,28 +62,28 @@
         </div>
 
         <div class="row ps-2 py-2">
-            <div class="col-6 border shadow p-3 border rounded-4 me-2 h-100">
+            <div class="col border shadow p-3 border rounded-4 me-2 h-100">
                 <h5>Recent Transaction</h5>
                 <table class="table">
-                    <tbody v-for="transaction in transactions">
+                    <tbody>
+                        {% for transaction in content["transactionHist"][:8] -%}
                         <tr>
-                            <td>{[transaction.drban]}</td>
-                            <td><span :class="{'text-success': transaction.crban == bankID, 'text-danger': transaction.crban != bankID}">{[transaction.txn_amt]}</span></td>
-                            <td>{[transaction.txn_time]}</td>
-                          </tr>
+                            <td>{{transaction.drban}}</td>
+                            <td><span>{{transaction.txn_amt}}</span></td>
+                            <td>{{transaction.txn_time}}</td>
+                        </tr>
+                        {%- endfor %}
                     </tbody>
                 </table>
-
             </div>
     
-            <div class="col border shadow p-3 border rounded-4 h-100">
+            <!-- <div class="col-6 border shadow p-3 border rounded-4 h-100">
                 <h5>SplitPay</h5>
-            </div>
+            </div> -->
         </div>
     </div>
 {% endblock %}
 
 {% block scriptsCall %}
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="{{ url_for('static', filename='homepage-vue.js') }}"></script>
 {% endblock %}

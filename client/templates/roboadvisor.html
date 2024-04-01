@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col chat-container">
+    <div class="col chat-container" @submit.prevent="submit">
         <div id="chat-box" class="chat-box"></div>
         <form id="chat-form" class="chat-form">
         <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off"/>
@@ -14,5 +14,5 @@
 {% endblock %}
 
 {% block scriptsCall %}
-    <script src="{{ url_for('static', filename='roboadvisor.js') }}"></script>
+    <script src="{{ url_for('static', filename='roboadvisor-vue.js') }}"></script>
 {% endblock %}

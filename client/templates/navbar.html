@@ -15,6 +15,7 @@
         <a href="#" class="nav-link link-dark nav-hover">
             <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"/></svg>
             Inbox
+            <span class="badge text-bg-primary rounded-pill">14</span>
         </a>
         </li>
         <li>
@@ -33,14 +34,14 @@
     <hr>
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle ms-3 me-2 ">
-        <strong>*user_fullname*</strong>
+            <span class="mx-3">account:</span>
+            <strong>{{content["bankID"]}}</strong>
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <!-- <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><hr class="dropdown-divider"></li> -->
+        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
         </ul>
     </div>
 </div>
