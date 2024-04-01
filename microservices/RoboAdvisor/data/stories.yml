@@ -1,0 +1,10 @@
+version: "3.1"
+
+stories:
+
+- story: provide bank statement and financial advice story
+  steps:
+  - intent: request_bank_statement
+  - action: action_generate_bank_statement
+  - intent: request_financial_advice
+  - action: action_provide_financial_advice

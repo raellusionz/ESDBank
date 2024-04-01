@@ -1,2 +1,8 @@
 .vercel
 node_modules
+venv/
+*/venv/
+__pycache__/
+*.pyc
+.rasa/
+.rasa/cache/

@@ -66,6 +66,7 @@ def processTransferFunds(details):
     recipient_hp = details["recipientPhoneNumber"]
     senderBAN = details['senderBAN']
     transactionAmount = details['transactionAmount']
+    category = details['category']
 
     # 2. Send the phone number {recipientPhoneNumber}
     # Invoke the user_accounts microservice
@@ -114,7 +115,7 @@ def processTransferFunds(details):
     # 5. Send retrieved bank_acct_ids to bank_accounts microservice
     print('\n\n-----Invoking bank_accounts microservice-----')
     recipient_BAN = user_accounts_result["data"]["bank_acct_id"]
-    bank_accounts_result = invoke_http(bank_accounts_URL+f"/{senderBAN}/{recipient_BAN}/{transactionAmount}", method="PUT")
+    bank_accounts_result = invoke_http(bank_accounts_URL+f"{senderBAN}/{recipient_BAN}/{transactionAmount}", method="PUT")
     print('bank_accounts_result:', bank_accounts_result)
 
 
@@ -155,8 +156,18 @@ def processTransferFunds(details):
 
     # 8. Send new transfer request details to RabbitMQ
     print('\n\n-----Invoking transaction_history microservice-----')
+
+    # Store bank_accounts_result['data'] as a variable
+    json_data = bank_accounts_result['data']
+    # Parse the JSON data into a Python dictionary
+    data_dict = json.loads(json_data)
+    # Add category key-value pair
+    data_dict['category'] = category
+    # Convert modified dictionary back to JSON
+    json_with_category = json.dumps(data_dict)
+
     transaction_history_result = invoke_http(
-        transaction_history_URL, method="POST", json=bank_accounts_result['data'])
+        transaction_history_URL, method="POST", json=json_with_category)
     print("transaction_history_result:", transaction_history_result, '\n')
 
     # Check the transfer request result; if a failure, send it to the error microservice.
