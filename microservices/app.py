@@ -32,7 +32,7 @@ def home():
     if "bankID" in session:
         bankID = session["bankID"]
         transactionHist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankID), method='GET')
-        print(transactionHist)
+        # print(transactionHist)
         accountBalance = invoke_http("http://127.0.0.1:5001/bankAccounts/bank_acct_id/" + str(bankID), method='GET')
         content = {"transactionHist": transactionHist['data'], "accountBalance": accountBalance['data'], "bankID": bankID}
         return render_template("homepage.html", content=content)

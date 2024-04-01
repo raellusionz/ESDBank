@@ -2,11 +2,8 @@
 {% block content %}
     <h3 class="p-3"> Groups </h3>
     <div class="d-grid gap-2 mx-auto">
-        <a href="/splitpay/group" class="btn btn-light">
-            Phuket Trip
-        </a>
-        <a href="/splitpay/group" class="btn btn-light">
-            Tokyo Trip
+        <a :href="'/splitpay/group?groupName='+group" class="btn btn-light" v-for="group in groups">
+            {[group]}
         </a>
     </div>
     <div class="container-fluid text-center">
