@@ -13,9 +13,6 @@ import amqp_connection
 app = Flask(__name__)
 CORS(app)
 
-user_accounts_URL = "http://127.0.0.1:5000/userAccounts/hp_num/"
-#bank_accounts_URL = "http://127.0.0.1:5001/bankAccounts/transferral/"
-#transaction_history_URL = "http://127.0.0.1:5002/transaction_history"
 group_details_URL = "http://127.0.0.1:5010/group_details"
 
 # These exchanges may need to be changed specific to this MS
@@ -31,17 +28,17 @@ if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
 
-@app.route("/create_group", methods=['POST'])
-def create_group():
+@app.route("/split_payment", methods=['POST'])
+def split_payment():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:
             details = request.get_json()
-            print("\nReceived a create group request in JSON:", details)
+            print("\nReceived a payment split request in JSON:", details)
 
             # do the actual work
-            # 1. Send group details from UI { [phoneNum1, phoneNum2, etc.], currUserBAN, currUserFullname, curUserPhoneNum, currUserEmail, groupName }
-            result = processCreateGroup(details)
+            # 1. Send split_payment details from UI { currUserBAN, currUserFullname, curUserPhoneNum, currUserEmail, requestedAmount, groupID }
+            result = processSplitPayment(details)
             print('\n------------------------')
             print('\nresult: ', result)
             return jsonify(result), result["code"]
@@ -55,7 +52,7 @@ def create_group():
 
             return jsonify({
                 "code": 500,
-                "message": "create_group.py internal error: " + ex_str
+                "message": "split_payment.py internal error: " + ex_str
             }), 500
 
     # if reached here, not a JSON request.
@@ -64,16 +61,17 @@ def create_group():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-def processCreateGroup(details):
+def processSplitPayment(details):
     curr_user_ban = details["userBAN"]
     curr_user_fullname = details['userFullname']
     curr_user_hp = details["userPhoneNum"]
     curr_user_email = details['userEmail']
 
-    group_name = details['groupName']
-    phone_num_list = details['phoneNums']
+    #### these need to be named accordingly when submitted from frontend
+    group_id = details['groupID']
+    requested_amount = details['reqAmount']
 
-    # 2. Send the list of phone numbers {[phoneNum1, phoneNum2, etc.]} to user_accounts to get details
+    # 2. Send the relevant details {curr_user_hp, }
     # Invoke the user_accounts microservice
     print('\n-----Invoking user_accounts microservice-----')
     member_details_dict = {}
@@ -225,4 +223,4 @@ def processCreateGroup(details):
 if __name__ == "__main__":
     print("This is flask for " + os.path.basename(__file__) +
           " for transferring funds...")
-    app.run(host="0.0.0.0", port=5200, debug=True)
+    app.run(host="0.0.0.0", port=5300, debug=True)

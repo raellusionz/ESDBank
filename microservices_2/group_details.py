@@ -187,6 +187,82 @@ def processGroupDetails(details):
             "data": {"created_group": new_group.json(), "added_members": [member.json() for member in created_members_list]}
             }
 
+@app.route("/split_payment_details", methods=['POST'])
+def insertSplitPaymentDetails():
+    # Check if the submitted details contains valid JSON
+    split_payment_details = None
+    if request.is_json:
+        split_payment_details = request.get_json()
+        result = processSplitPaymentDetails(split_payment_details)
+        return result#, result["code"]
+    else:
+        data = request.get_data()
+        print("Received invalid split payment details:")
+        print(data)
+        return jsonify({"code": 400,
+                        # make the data string as we dunno what could be the actual format
+                        "data": str(data),
+                        "message": "Split payment details should be in JSON."}), 400  # Bad Request input
+
+
+def processSplitPaymentDetails(details):
+    print("Processing split payment details:")
+    print(details)
+    member_details_dict = details["members"]
+
+    print()  # print a new line feed as a separator
+
+    # create new group record
+    new_group = group_details(group_name)
+    try:
+        db.session.add(new_group)
+        db.session.commit()
+
+    except:
+        return  {
+                "code": 500,
+                "data": request.get_json(),
+                "message": "An error occurred logging the group name."
+                }
+    
+    # retrieve group_id
+    created_group_id = new_group.group_id
+    
+    # store members in list
+    created_members_list = []
+
+    # create member records using created group_id
+    for i in range(-1, len(member_details_dict)-1, 1):
+        member_ban = member_details_dict[str(i)]["data"]["bank_acct_id"]
+        member_hp = member_details_dict[str(i)]["data"]["user_hp"]
+        member_fullname = member_details_dict[str(i)]["data"]["user_fullname"]
+        member_email = member_details_dict[str(i)]["data"]["user_email"]   
+
+        # create and add member record
+        new_member = members(group_id=created_group_id,
+                                member_ban=member_ban,
+                                group_name=group_name,
+                                member_hp=member_hp,
+                                member_fullname=member_fullname,
+                                member_email=member_email)
+        try:
+            db.session.add(new_member)    
+            db.session.commit()
+            created_members_list.append(new_member)
+
+        except:
+            return  {
+                "code": 500,
+                "data": request.get_json(),
+                "message": "An error occurred logging the group members."
+                }
+
+
+    return  {
+            "code": 201,
+            "message": "Group successfully created and members successfully added.",
+            "data": {"created_group": new_group.json(), "added_members": [member.json() for member in created_members_list]}
+            }
 
 
 if __name__ == '__main__':
