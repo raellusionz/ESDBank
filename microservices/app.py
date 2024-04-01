@@ -15,8 +15,10 @@ def login():
         data = invoke_http("http://127.0.0.1:5000/userAccounts/user_email/" + email)
         data = json.dumps(data)
         userAccntDetails = json.loads(data)
-        bankID = userAccntDetails["data"]["bank_acct_id"]
-        session["bankID"] = bankID
+        session["bankID"] = userAccntDetails["data"]["bank_acct_id"]
+        session["userFullname"] = userAccntDetails["data"]["user_fullname"]
+        session["userPhoneNum"] = userAccntDetails["data"]["user_hp"]
+        session["userEmail"] = userAccntDetails["data"]["user_email"]
         return redirect(url_for("home"))
     else:
         return render_template("login.html")
@@ -55,14 +57,39 @@ def roboadvisor():
 @app.route("/splitpay")
 def splitpay():
     bankID = session["bankID"]
-    content = {"bankID": bankID}
+    groups = invoke_http("http://127.0.0.1:5010/members/bank_acct_id/" + str(bankID), method='GET')
+    content = {
+                "bankID": bankID, 
+                "groups": groups['data']['groups_member_is_in']
+            }
     return render_template("splitpay.html", content=content)
 
-@app.route("/splitpay/group")
-def splitpayGrp():
+@app.route("/splitpay/group/<groupName>/<groupID>")
+def splitpayGrp(groupName, groupID):
     bankID = session["bankID"]
-    content = {"bankID": bankID}
+    content = {
+            "bankID": bankID,
+            "groupName": groupName,
+            "groupID": groupID
+        }
     return render_template("splitpayGrp.html", content=content)
+
+@app.route("/splitpayCreateGrp", methods=['POST'])
+def splitpayCreateGrp():
+    request_data = request.get_json()
+    # print(request_data, type(request_data))
+    createGrpData = {
+        'curr_user_ban' : session["bankID"],
+        'curr_user_fullname': session['userFullname'],
+        'curr_user_email':session['userEmail'],
+        'curr_user_hp': session["userPhoneNum"],
+        'group_name': request_data['newGroupName'],
+        'phone_num_list': request_data['phoneNums'],
+    }
+    print(createGrpData)
+    result = invoke_http("http://127.0.0.1:5200/create_group", method='POST', json=createGrpData)
+    return f"create group success"
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
