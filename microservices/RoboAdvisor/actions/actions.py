@@ -57,9 +57,9 @@ class ActionProvideFinancialAdvice(Action):
 
         transaction_hist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankId), method='GET')
         transaction_hist = transaction_hist['data']
-        user_saving_goals = invoke_http("http://127.0.0.1:5006/userPreference/user_saving_goal/" + str(bankId), method='GET')
+        user_saving_goals = invoke_http("http://127.0.0.1:5000/userPreference/user_saving_goal/" + str(bankId), method='GET')
         user_saving_goals = user_saving_goals['data']
-        user_expenditure = invoke_http("http://127.0.0.1:5006/userPreference/user_expenditure/" + str(bankId), method='GET')
+        user_expenditure = invoke_http("http://127.0.0.1:5000/userPreference/user_expenditure/" + str(bankId), method='GET')
         user_expenditure = user_expenditure['data']
 
         # Calculate total income for determining percentage goals
@@ -116,7 +116,7 @@ class ActionGenerateBankStatement(Action):
 
         transaction_hist = invoke_http("http://127.0.0.1:5002/transactionHistory/bank_acct_id/" + str(bankId), method='GET')
         transaction_hist = transaction_hist['data']
-        user_expenditure = invoke_http("http://127.0.0.1:5006/userPreference/user_expenditure/" + str(bankId), method='GET')
+        user_expenditure = invoke_http("http://127.0.0.1:5000/userPreference/user_expenditure/" + str(bankId), method='GET')
         user_expenditure = user_expenditure['data']
 
         # Filter transactions related to the user's bank ID
