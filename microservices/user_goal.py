@@ -62,7 +62,7 @@ def homepage():
     return "Welcome to the homepage of the user_preference microservice Lab4Proj."
 
 
-# Get the whole database
+# Get the whole userPreference table
 
 @app.route("/userPreference")
 def get_all():
