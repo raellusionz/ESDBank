@@ -5,7 +5,8 @@
 from enum import Enum
 
 import sys
-from email_functions import sendEmail, sendEmail2
+
+from email_functions import sendTransferFundsNotif, sendCreateGroupNotif
 
 import amqp_connection
 import json
@@ -65,7 +66,8 @@ def processCreateGroupNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendEmail2(inviter, invitee, email, group_name)
+
+        sendCreateGroupNotif(inviter, invitee, email, group_name)
         result = {
                 "code": 201,
                 "message": "Notification mails of group invite successfully sent."
@@ -109,8 +111,8 @@ def processTransferFundsNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendEmail(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
-        sendEmail(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
+        sendTransferFundsNotif(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
+        sendTransferFundsNotif(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
         result = {
                 "code": 201,
                 "message": "Notification mails of fund transferral successfully sent."
