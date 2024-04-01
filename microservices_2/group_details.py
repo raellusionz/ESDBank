@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 import psycopg2
 import os
-from sqlalchemy import BigInteger, or_
+from sqlalchemy import BigInteger, or_, ForeignKey
 
 app = Flask(__name__)
 
@@ -63,6 +63,57 @@ class members(db.Model):
             "member_fullname": self.member_fullname,
             "member_email": self.member_email,
         }
+    
+class split_requests(db.Model):
+    __tablename__ = 'sp_split_requests'
+
+    req_id = db.Column(BigInteger, primary_key=True, autoincrement = True)
+    group_id = db.Column(BigInteger, ForeignKey('sp_group_details_db.group_id'))
+    total_req_amount = db.Column(db.DECIMAL(15,2), nullable=False)
+    requester_phone_num = db.Column(db.Integer, nullable=False)
+    req_date_time = db.Column(db.String(100))
+
+
+    def __init__(self, group_id, total_req_amount, requester_phone_num, req_date_time):
+        self.group_id = group_id
+        self.total_req_amount = total_req_amount
+        self.requester_phone_num = requester_phone_num
+        self.req_date_time =req_date_time
+
+    def json(self):
+        return {
+            "req_id": self.req_id,
+            "group_id": self.group_id,
+            "total_req_amount": float(self.total_req_amount),
+            "requester_phone_num": self.requester_phone_num,
+            "req_date_time": self.req_date_time
+        }
+
+class requested_users(db.Model):
+    __tablename__ = 'sp_requested_user'
+
+    req_id = db.Column(BigInteger, ForeignKey('sp_split_requests.req_id'))
+    userBAN = db.Column(db.String(20), primary_key=True)
+    indiv_req_amount = db.Column(db.DECIMAL(15,2), nullable=False)
+    status = db.Column(db.String(10))
+    resp_date_time = db.Column(db.String(100))
+
+
+    def __init__(self, req_id, userBAN, indiv_req_amount, status, resp_date_time):
+        self.req_id = req_id
+        self.userBAN = userBAN
+        self.indiv_req_amount = indiv_req_amount
+        self.status = status
+        self.resp_date_time =resp_date_time
+
+    def json(self):
+        return {
+            "req_id": self.req_id,
+            "user_ban": self.userBAN,
+            "indiv_req_amount": float(self.indiv_req_amount),
+            "status": self.status,
+            "resp_date_time": self.resp_date_time
+        }
 
 @app.route("/")
 def homepage():
@@ -105,6 +156,46 @@ def get_all_members():
         {
             "code": 404,
             "message": "There are no members in any groups."
+        }
+    ), 404
+
+@app.route("/splitRequests")
+def get_all_split_requests():
+    split_requests_list = db.session.scalars(db.select(split_requests)).all()
+
+    if len(split_requests_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "split_requests": [split_request.json() for split_request in split_requests_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no split requests in any groups."
+        }
+    ), 404
+
+@app.route("/requestedMembers")
+def get_all_requested_members():
+    requested_members_list = db.session.scalars(db.select(requested_users)).all()
+
+    if len(requested_members_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "requested_member": [requested_member.json() for requested_member in requested_members_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no requested members in any groups."
         }
     ), 404
 
@@ -187,6 +278,8 @@ def processGroupDetails(details):
             "data": {"created_group": new_group.json(), "added_members": [member.json() for member in created_members_list]}
             }
 
+
+
 @app.route("/split_payment_details", methods=['POST'])
 def insertSplitPaymentDetails():
     # Check if the submitted details contains valid JSON
@@ -208,12 +301,16 @@ def insertSplitPaymentDetails():
 def processSplitPaymentDetails(details):
     print("Processing split payment details:")
     print(details)
-    member_details_dict = details["members"]
+    amount_to_split = details["data"]["req_amount"]
+    requester_phone_num = details["data"]["requester_phone_num"]
+    group_id = details["data"]["group_id"]
+
+
 
     print()  # print a new line feed as a separator
 
     # create new group record
-    new_group = group_details(group_name)
+    new_request = split_requests()
     try:
         db.session.add(new_group)
         db.session.commit()
