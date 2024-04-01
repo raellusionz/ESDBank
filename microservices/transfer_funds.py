@@ -213,7 +213,8 @@ def processTransferFunds(details):
                 "amount": transactionAmount,
                 "transactionDate": transaction_date,
                 "transactionID": transaction_id
-                }
+                },
+            "notification_type": "transfer_funds"
             }
     
     message = json.dumps(data)

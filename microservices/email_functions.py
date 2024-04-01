@@ -45,3 +45,40 @@ def sendEmail(name1, name2, email, transactionAmount, transactionDate, transacti
 
     # using print() will also return status code and data
     mailer.send(mail_body)
+
+def sendEmail2(inviter, invitee, email, group_name):
+
+    # define an empty dict to populate with mail values
+    mail_body = {}
+
+    mail_from = {
+        "name": "ESDBank",
+        "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+    }
+
+    recipients = [
+        {
+            "name": invitee,
+            "email": email,
+        }
+    ]
+
+    reply_to = {
+        "name": "Name",
+        "email": "reply@domain.com",
+    }
+
+    content =f"""<h1>You have been added to a group!</h1>
+                <p>Dear {invitee},<br>
+                You have been added to the Splitpay group "{group_name}" created by {inviter}</p>
+                <p>Thank you for trusting ESDBank for your payment needs. We appreciate your continued business.</p>"""
+
+    mailer.set_mail_from(mail_from, mail_body)
+    mailer.set_mail_to(recipients, mail_body)
+    mailer.set_subject("Hello!", mail_body)
+    mailer.set_html_content(content, mail_body)
+    mailer.set_plaintext_content("This is the text content", mail_body)
+    mailer.set_reply_to(reply_to, mail_body)
+
+    # using print() will also return status code and data
+    mailer.send(mail_body)

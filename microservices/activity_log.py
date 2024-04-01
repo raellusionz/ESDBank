@@ -28,9 +28,9 @@ def callback(channel, method, properties, body): # required signature for the ca
     processActivityLog(json.loads(body))
     print()
 
-def processActivityLog(order):
+def processActivityLog(activity):
     print("activity_log: Recording the most recent activity:")
-    print(order)
+    print(activity)
 
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
     print("activity_log: Getting Connection")
