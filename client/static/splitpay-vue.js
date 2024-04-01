@@ -7,6 +7,7 @@ const main = Vue.createApp({
             groupName: '',
             phoneNums: [],
             notValid: false,
+            groups: ['Phuket Trip', 'Japan Trip']
         };
     },
 
