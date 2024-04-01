@@ -31,12 +31,14 @@ class transaction_logs(db.Model):
     drban = db.Column(db.String(20), nullable=False) 
     txn_amt = db.Column(db.DECIMAL(15,2), nullable=False)
     txn_time = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(255))
 
-    def __init__(self, crban, drban, txn_amt, txn_time):
+    def __init__(self, crban, drban, txn_amt, txn_time, category):
         self.crban = crban
         self.drban = drban
         self.txn_amt = txn_amt
         self.txn_time = txn_time
+        self.category = category
 
     def json(self):
         return {
@@ -44,7 +46,8 @@ class transaction_logs(db.Model):
             "crban": self.crban,
             "drban": self.drban,
             "txn_amt": float(self.txn_amt),  # Convert Decimal to float for JSON serialization
-            "txn_time": self.txn_time
+            "txn_time": self.txn_time,
+            "category": self.category
         }
 
 @app.route("/")
@@ -118,11 +121,12 @@ def processTransactionDetails(transaction_details):
     drBAN = transaction_details["sender"]["bank_acct_id"]
     crBAN = transaction_details["recipient"]["bank_acct_id"]
     transaction_amount = transaction_details["amount"]
+    category = transaction_details["category"]
     # If transaction id contains "ERROR", simulate failure
 
     print()  # print a new line feed as a separator
 
-    transaction_log = transaction_logs(crBAN, drBAN, transaction_amount, timeOfTransaction)
+    transaction_log = transaction_logs(crBAN, drBAN, transaction_amount, timeOfTransaction, category)
 
     try:
         db.session.add(transaction_log)
