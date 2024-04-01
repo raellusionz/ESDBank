@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 # Configure PostgreSQL database URI
 POSTGRES_USER = "default"
-POSTGRES_PASSWORD = "vHFyts8wa4PK"
-POSTGRES_HOST = "ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech"
+POSTGRES_PASSWORD = "a9NucShgs4vC"
+POSTGRES_HOST = "ep-bold-band-a1oubdjz-pooler.ap-southeast-1.aws.neon.tech"
 POSTGRES_DB = "verceldb"
 
 # PostgreSQL URI format: postgresql://username:password@host:port/database_name

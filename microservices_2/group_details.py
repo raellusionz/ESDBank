@@ -4,6 +4,7 @@ from os import environ
 import psycopg2
 import os
 from sqlalchemy import BigInteger, or_, ForeignKey
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -93,15 +94,15 @@ class requested_users(db.Model):
     __tablename__ = 'sp_requested_user'
 
     req_id = db.Column(BigInteger, ForeignKey('sp_split_requests.req_id'))
-    userBAN = db.Column(db.String(20), primary_key=True)
+    userban = db.Column(db.String(20), primary_key=True)
     indiv_req_amount = db.Column(db.DECIMAL(15,2), nullable=False)
     status = db.Column(db.String(10))
     resp_date_time = db.Column(db.String(100))
 
 
-    def __init__(self, req_id, userBAN, indiv_req_amount, status, resp_date_time):
+    def __init__(self, req_id, userban, indiv_req_amount, status, resp_date_time):
         self.req_id = req_id
-        self.userBAN = userBAN
+        self.userban = userban
         self.indiv_req_amount = indiv_req_amount
         self.status = status
         self.resp_date_time =resp_date_time
@@ -109,7 +110,7 @@ class requested_users(db.Model):
     def json(self):
         return {
             "req_id": self.req_id,
-            "user_ban": self.userBAN,
+            "user_ban": self.userban,
             "indiv_req_amount": float(self.indiv_req_amount),
             "status": self.status,
             "resp_date_time": self.resp_date_time
@@ -301,32 +302,44 @@ def insertSplitPaymentDetails():
 def processSplitPaymentDetails(details):
     print("Processing split payment details:")
     print(details)
-    amount_to_split = details["data"]["req_amount"]
-    requester_phone_num = details["data"]["requester_phone_num"]
-    group_id = details["data"]["group_id"]
-
-
-
+    amount_to_split = details["req_amount"]
+    requester_phone_num = details["requester_phone_num"]
+    group_id = details["group_id"]
+    req_datetime = datetime.now()
     print()  # print a new line feed as a separator
 
     # create new group record
-    new_request = split_requests()
+    new_request = split_requests(group_id, amount_to_split, requester_phone_num, req_datetime)
     try:
-        db.session.add(new_group)
+        db.session.add(new_request)
         db.session.commit()
 
     except:
         return  {
                 "code": 500,
                 "data": request.get_json(),
-                "message": "An error occurred logging the group name."
+                "message": "An error occurred logging the split_request."
                 }
-    
-    # retrieve group_id
-    created_group_id = new_group.group_id
-    
-    # store members in list
-    created_members_list = []
+
+    # retrieve list of group members in this specific group_id
+    members_list = db.session.scalars(db.select(requested_users)).all()
+
+    if len(requested_members_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "requested_member": [requested_member.json() for requested_member in requested_members_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no requested members in any groups."
+        }
+    ), 404
+
 
     # create member records using created group_id
     for i in range(-1, len(member_details_dict)-1, 1):
