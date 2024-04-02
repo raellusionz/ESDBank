@@ -280,7 +280,7 @@ def get_requested_members_by_group_id(group_id_num):
 
 
 @app.route("/group_details", methods=['POST'])
-def insertGroupDetails():
+def insertGroupDetails(): 
     # Check if the submitted details contains valid JSON
     group_details = None
     if request.is_json:
