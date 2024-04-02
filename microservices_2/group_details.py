@@ -339,7 +339,7 @@ def get_split_requests_of_user_by_userBAN(user_hp):
 
 # add new group and the members into database
 @app.route("/group_details", methods=['POST'])
-def insertGroupDetails():
+def insertGroupDetails(): 
     # Check if the submitted details contains valid JSON
     group_details = None
     if request.is_json:
