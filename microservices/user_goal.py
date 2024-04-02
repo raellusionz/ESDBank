@@ -1,9 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from os import environ
-from decimal import Decimal
-import psycopg2
-from datetime import datetime
 import os
 
 app = Flask(__name__)

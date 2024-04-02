@@ -3,7 +3,6 @@ from flask_cors import CORS
 
 import os, sys
 
-import requests
 from invokes import invoke_http
 
 import pika
@@ -18,8 +17,10 @@ group_details_URL = "http://127.0.0.1:5010/requestedMembers/updateRequest/"
 transfer_funds_URL = "http://127.0.0.1:5100/transfer_funds"
 
 # These exchanges may need to be changed specific to this MS
-exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
-exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+# exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
+# exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+exchangename = "transfer_funds_topic" #transfer_funds_topic
+exchangetype = "topic"  #topic 
 
 #create a connection and a channel to the broker to publish messages to activity_log, error queues
 connection = amqp_connection.create_connection() 

@@ -5,8 +5,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
-from os import environ
-import psycopg2
 from sqlalchemy import BigInteger, or_
 
 app = Flask(__name__)

@@ -1,13 +1,13 @@
 import time
 import pika
-from os import environ
 from dotenv import dotenv_values
 
 secrets = dotenv_values("../.env.development.local")
 
-hostname = secrets['hostname'] #localhost
-port = secrets['port']        #5672 
-
+# hostname = secrets['hostname'] #localhost
+# port = secrets['port']        #5672 
+hostname = "localhost"
+port = 5672        #5672 
 
 # function to create a connection to the broker
 def create_connection(max_retries=12, retry_interval=5):

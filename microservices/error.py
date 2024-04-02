@@ -6,8 +6,8 @@ import amqp_connection
 import json
 import pika
 
-e_queue_name = amqp_connection.secrets['e_queue_name'] #Error
-
+# e_queue_name = amqp_connection.secrets['e_queue_name'] #Error
+e_queue_name = "Error"
 
 def receiveError(channel):
     try:

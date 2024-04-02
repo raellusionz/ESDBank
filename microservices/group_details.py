@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from os import environ
-import psycopg2
 import os
 from sqlalchemy import BigInteger, and_, ForeignKey, PrimaryKeyConstraint
 from datetime import datetime

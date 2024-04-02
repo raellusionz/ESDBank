@@ -7,8 +7,8 @@ import json
 import pika
 
 
-al_queue_name = amqp_connection.secrets['al_queue_name'] #Activity_Log
-
+# al_queue_name = amqp_connection.secrets['al_queue_name'] #Activity_Log
+al_queue_name = "Activity_Log"
 def receiveActivityLog(channel):
     try:
         # set up a consumer and start to wait for coming messages

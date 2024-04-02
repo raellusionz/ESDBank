@@ -1,18 +1,24 @@
 import time
 import pika
-import os
-from os import environ
-from dotenv import dotenv_values
+# from dotenv import dotenv_values
 
-secrets = dotenv_values("../.env.development.local")
+# secrets = dotenv_values("../.env.development.local")
 
-hostname = secrets['hostname'] #localhost
-port = secrets['port']         #5672 
-exchangename = secrets['exchangename'] #transfer_funds_topic
-exchangetype = secrets['exchangetype'] #topic
-activity_log_queue = secrets['al_queue_name'] #Activity_Log
-error_queue = secrets['e_queue_name'] #Error
-notification_queue = secrets['n_queue_name'] #Notification
+# hostname = secrets['hostname'] #localhost
+# port = secrets['port']         #5672 
+# exchangename = secrets['exchangename'] #transfer_funds_topic
+# exchangetype = secrets['exchangetype'] #topic
+# activity_log_queue = secrets['al_queue_name'] #Activity_Log
+# error_queue = secrets['e_queue_name'] #Error
+# notification_queue = secrets['n_queue_name'] #Notification
+
+hostname = "localhost" #localhost
+port = 5672        #5672 
+exchangename = "transfer_funds_topic" #transfer_funds_topic
+exchangetype = "topic" #topic
+activity_log_queue = "Activity_Log" #Activity_Log
+error_queue = "Error" #Error
+notification_queue = "Notification" #Notification
 
 #to create a connection to the broker
 def create_connection(max_retries=12, retry_interval=5):

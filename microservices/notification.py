@@ -11,10 +11,15 @@ import amqp_connection
 import json
 import pika
 
-n_queue_name = amqp_connection.secrets['n_queue_name'] # "Notification"
+# n_queue_name = amqp_connection.secrets['n_queue_name'] # "Notification"
 
-exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
-exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+# exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
+# exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+
+n_queue_name = "Notification" # "Notification"
+
+exchangename = "transfer_funds_topic" #transfer_funds_topic
+exchangetype = "topic" #topic
 
 #create a connection and a channel to the broker to publish messages to activity_log, error queues
 connection = amqp_connection.create_connection() 
