@@ -380,7 +380,6 @@ def processGroupDetails(details):
     
     # retrieve group_id
     created_group_id = new_group.group_id
-    print("This Works THOUGHHH")
     print(created_group_id)
     # store members in list
     created_members_list = []
@@ -445,7 +444,7 @@ def processSplitPaymentDetails(details):
     amount_to_split = details["req_amount"]
     requester_phone_num = details["requester_phone_num"]
     group_id = details["group_id"]
-    req_datetime = datetime.now()
+    req_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print()  # print a new line feed as a separator
 
     # create new group record
@@ -519,6 +518,41 @@ def processSplitPaymentDetails(details):
         "data": request.get_json(),
         "message": f"An error occurred logging the split_request or requested_members for this split request id:{created_req_id}."
     }
+
+# To adjust the reply status of a requested_member log in the database by taking in the replier BAN, req_id and the reply ("accept" or "decline")
+@app.route("/requestedMembers/updateRequest/<string:user_ban>/<int:req_id>/<string:reply>", methods=['PUT'])
+def updateRequestStatus(user_ban, req_id, reply):
+    # retrieve the specific request to be updated
+    request_to_update = db.session.scalars(
+    	db.select(requested_users).filter(
+            and_(requested_users.userban==user_ban,
+                 requested_users.req_id==req_id)).limit(1)).first()
+
+    if request_to_update:
+        request_to_update.status = reply
+        time_of_reply = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        request_to_update.resp_date_time = time_of_reply
+        db.session.commit()
+
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Request status successfully updated with reply and datetime.",
+                "data": 
+                    {
+                        "timeOfReply": time_of_reply,
+                        "reply": reply,
+                        "updatedRequest": request_to_update.json()
+                    }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "The specific request is not found."
+        }
+    ), 404
+
 
 if __name__ == '__main__':
     # app.run(port=5000, debug=True)
