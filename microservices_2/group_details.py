@@ -225,6 +225,60 @@ def get_member_groups_by_BAN(id_num):
         }
     ), 404
 
+@app.route("/members/group_id/<int:group_id_num>")
+def get_members_by_group_id(group_id_num):
+    members_of_group_list = db.session.scalars(
+        db.select(members).filter_by(group_id=group_id_num)
+        ).all()
+
+    if len(members_of_group_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "groups_members": [member.json() for member in members_of_group_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "The group does not exist."
+        }
+    ), 404
+
+@app.route("/requestedMembers/group_id/<int:group_id_num>")
+def get_requested_members_by_group_id(group_id_num):
+    split_requests_list = db.session.scalars(
+        db.select(split_requests).filter_by(group_id=group_id_num)
+        ).all()
+
+    if len(split_requests_list) == 0:
+        return jsonify(
+            {
+                "code": 404,
+                "message": "There are no split requests for this group."
+            }
+        )
+    
+    data = {}
+    for request in split_requests_list:
+        request_req_id = request.req_id
+        requested_members_list = db.session.scalars(
+            db.select(requested_users).filter_by(req_id=request_req_id)
+            ).all()
+        data[request_req_id] = [member.json() for member in requested_members_list]
+
+    return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "requests_by_id": data
+                }
+            }
+        )
+
+
 @app.route("/group_details", methods=['POST'])
 def insertGroupDetails():
     # Check if the submitted details contains valid JSON
