@@ -15,7 +15,11 @@ An web application that aims to mimic a bank online service. It caters to three 
 
 To run each microservice locally:
 
-Open a terminal window and navigate to the directory of each microservice.
+Open a terminal window and navigate to the directory "cd microservices"
+
+Run the command "docker run -d --hostname esd-rabbit --name rabbitmq-mgmt -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
+
+Run the amqp_setup.py
 
 Run the Python script for each microservice.
 
