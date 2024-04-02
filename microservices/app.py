@@ -64,18 +64,6 @@ def splitpay():
             }
     return render_template("splitpay.html", content=content)
 
-@app.route("/splitpay/group/<groupName>/<groupID>")
-def splitpayGrp(groupName, groupID):
-    bankID = session["bankID"]
-    members = invoke_http("http://127.0.0.1:5010/members/group_id/" + str(groupID), method='GET')
-    content = {
-            "bankID": bankID,
-            "groupName": groupName,
-            "groupID": groupID,
-            "members": members['data']['groups_members'],
-        }
-    return render_template("splitpayGrp.html", content=content)
-
 @app.route("/splitpayCreateGrp", methods=['POST'])
 def splitpayCreateGrp():
     request_data = request.get_json()
@@ -92,6 +80,49 @@ def splitpayCreateGrp():
     result = invoke_http("http://127.0.0.1:5200/create_group", method='POST', json=createGrpData)
     return f"create group success"
 
+@app.route("/splitpay/group/<groupName>/<groupID>")
+def splitpayGrp(groupName, groupID):
+    bankID = session["bankID"]
+    members = invoke_http("http://127.0.0.1:5010/members/group_id/" + str(groupID), method='GET')
+    pendingRequests = invoke_http("http://127.0.0.1:5010/splitRequests/pendingRequests/user_details/"+ str(bankID) + "/" + str(session['userPhoneNum']) + "/" + str(groupID), method='GET')
+    # print(pendingRequests, bankID, session['userPhoneNum'], groupID)
+    content = {
+            "bankID": bankID,
+            "groupName": groupName,
+            "groupID": groupID,
+            "pendingRequests": pendingRequests['data']['pending_requests_to_user_by_id'],
+            "members": members['data']['groups_members'],
+        }
+    return render_template("splitpayGrp.html", content=content)
+
+@app.route("/startSplitPayFromUI", methods=['POST'])
+def startSplitPayFromUI():
+    request_data = request.get_json()
+    splitPayData =  { 
+        "currUserBAN": session["bankID"], 
+        "currUserFullname": session['userFullname'], 
+        "curUserPhoneNum": session["userPhoneNum"], 
+        "currUserEmail": session['userEmail'], 
+        "requestedAmount": request_data['requestedAmount'], 
+        "groupID": request_data['groupID']
+    }
+    result = invoke_http("http://127.0.0.1:5300/split_payment", method='POST', json=splitPayData)
+    return f"create group success"
+
+@app.route("/handle_split_reply", methods=['POST'])
+def handle_split_reply():
+    request_data = request.get_json()
+    details = {
+        "payingUserFullname": session["userFullname"],
+        "payingUserEmail": session["userEmail"],
+        "payingUserBan": session["bankID"],
+        "requesterUserPhoneNum": request_data['request']['requester_hp'],
+        "request_id": request_data["requestId"],
+        "amount_to_pay": request_data['request']['amount_to_pay'],
+        "reply": request_data['replyStatus'],
+    }
+    result = invoke_http("http://127.0.0.1:5400/handle_split_reply", method="POST", json=details)
+    return f"splitpay status updated"
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
