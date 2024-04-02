@@ -2,12 +2,11 @@
 {% block content %}
     <h3 class="p-3"> Groups </h3>
     <div class="d-grid gap-2 mx-auto">
-        <a href="/splitpay/group" class="btn btn-light">
-            Phuket Trip
+      {% for group in content["groups"] -%}
+        <a href="{{ url_for('splitpayGrp', groupName=group['group_name'], groupID=group['group_id']) }}" class="btn btn-light">
+        {{group['group_name']}}
         </a>
-        <a href="/splitpay/group" class="btn btn-light">
-            Tokyo Trip
-        </a>
+      {%- endfor %}
     </div>
     <div class="container-fluid text-center">
         <button class="btn btn-light border border-primary text-primary m-3" data-bs-toggle="modal" data-bs-target="#createGrpModal">Add new group</button>
@@ -22,7 +21,7 @@
             </div>
             <div class="modal-body">
               <div>
-                <input type="text" class="form-control mb-3" placeholder="Enter Group Name" aria-label="grpName" aria-describedby="basic-addon1" v-model="groupName">
+                <input type="text" class="form-control mb-3" placeholder="Enter Group Name" aria-label="grpName" aria-describedby="basic-addon1" v-model="newGroupName">
               </div>
               <p>Invite:</p>
               <div v-show="phoneNums">

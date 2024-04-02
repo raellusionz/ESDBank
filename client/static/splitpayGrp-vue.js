@@ -4,7 +4,7 @@ const main = Vue.createApp({
     data() {
         return {
             members: ['Chi', 'Sophie', 'Sarah'],
-            group: "Phuket Trip",
+            group: "",
             selectedMembers: [],
             paymentDescription: '',
             totalAmount: null,
@@ -39,7 +39,12 @@ const main = Vue.createApp({
         decline() {
 
         },
-    }
+    },
+
+    mounted() {
+        let urlParams = new URLSearchParams(window.location.search);
+        this.group = urlParams.get('groupName'); // "MyParam"
+    },
 });
 
 main.mount('#main');

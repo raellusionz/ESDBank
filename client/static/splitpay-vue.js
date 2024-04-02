@@ -4,7 +4,7 @@ const main = Vue.createApp({
     data() {
         return {
             keyedPhoneNum: '',
-            groupName: '',
+            newGroupName: '',
             phoneNums: [],
             notValid: false,
         };
@@ -24,21 +24,21 @@ const main = Vue.createApp({
             }
         },
         createGrp() {
-            console.log({'phoneNums': this.phoneNums,'groupName': this.groupName});
+            console.log({'phoneNums': this.phoneNums,'newGroupName': this.newGroupName});
             // Make AJAX POST request to Flask app
             fetch('/splitpayCreateGrp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({'phoneNums': this.phoneNums,'groupName': this.groupName})
+                body: JSON.stringify({'phoneNums': this.phoneNums,'newGroupName': this.newGroupName})
             })
             .then(response => {
                 if (response.ok) {
                     // Handle success response
                     console.log('Create group successful!');
                     this.phoneNums = [];
-                    this.groupName = '';
+                    this.newGroupName = '';
                     // Optionally, you can redirect the user to another page
                     // window.location.href = '/success';
                 } else {
@@ -46,7 +46,7 @@ const main = Vue.createApp({
                     alert('Error occurred during creating group.');
                     console.log("Error occurred during creating group1");
                     this.phoneNums = [];
-                    this.groupName = '';
+                    this.newGroupName = '';
                 }
             })
             .catch(error => {

@@ -6,8 +6,7 @@ mailer = emails.NewEmail(dotenv_values('../.env.development.local')['EMAIL_API']
 
 
 def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDate, transactionID, content):
-
-
+  
    # define an empty dict to populate with mail values
    mail_body = {}
 
@@ -105,7 +104,6 @@ def sendCreateGroupNotif(inviter, invitee, email, group_name):
 
    # using print() will also return status code and data
    mailer.send(mail_body)
-
 
 # requesterName
 # payerName
