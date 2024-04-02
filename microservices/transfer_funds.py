@@ -204,6 +204,7 @@ def processTransferFunds(details):
     # 9. Send the relevant info {senderFullname, recipientFullname, senderEmail, recipientEmail} to notification microservice
     # Invoke the notification microservice
     print('\n\n-----Invoking notification microservice-----')
+
     senderFullname = details["senderFullname"]
     senderEmail = details["senderEmail"]
     recipientFullname = user_accounts_result["data"]["user_fullname"]
@@ -227,7 +228,6 @@ def processTransferFunds(details):
     print('\n\n-----Publishing the (notification details) message with routing_key=notification.details-----')
     channel.basic_publish(exchange=exchangename, routing_key="notification.details", 
             body=message)
-
     # 10. Return successful fund transfer results
     return {
         "code": 201,

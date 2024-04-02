@@ -151,3 +151,14 @@ def sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, g
 
     # using print() will also return status code and data
     mailer.send(mail_body)
+
+inviter = "Jakob Lie"
+invitee = "Sarah Thauheed"
+email1 = "jakoblwr@gmail.com"
+group_name = "RainbowNoodles"
+email2 = "sarah.thauheed@hotmail.com"
+print("Check0")
+sendCreateGroupNotif(inviter, invitee,email2, group_name)
+print("CHeck 1")
+sendCreateGroupNotif(inviter, invitee,email1, group_name)
+print("Check2")

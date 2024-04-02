@@ -86,7 +86,7 @@ def splitpayCreateGrp():
         'curr_user_email':session['userEmail'],
         'curr_user_hp': session["userPhoneNum"],
         'group_name': request_data['newGroupName'],
-        'phone_num_list': request_data['phoneNums'],
+        'phone_num_list': [int(phone_num) for phone_num in request_data['phoneNums']],
     }
     print(createGrpData)
     result = invoke_http("http://127.0.0.1:5200/create_group", method='POST', json=createGrpData)
@@ -118,6 +118,8 @@ def transferFundsFromUI():
     request_data = request.get_json()
     # Add the 'senderBAN' key with its value to the request_data dictionary
     request_data['senderBAN'] = session["bankID"]
+    request_data["senderFullname"] = session["userFullname"]
+    request_data["senderEmail"] = session["userEmail"]
     result = invoke_http("http://127.0.0.1:5100/transfer_funds", method='POST', json=request_data)
     return result
 

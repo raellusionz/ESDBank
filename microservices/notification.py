@@ -181,6 +181,7 @@ def processTransferFundsNotification(details):
                 body=message)
         print("\nNotification activity published to the RabbitMQ Exchange.")
 
+
 if __name__ == "__main__":  # execute this program only if it is run as a script (not by 'import')
     print("notification microservice: Getting Connection")
     connection = amqp_connection.create_connection() #get the connection to the broker
