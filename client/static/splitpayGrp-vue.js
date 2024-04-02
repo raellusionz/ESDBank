@@ -3,24 +3,22 @@ const main = Vue.createApp({
 
     data() {
         return {
-            members: ['Chi', 'Sophie', 'Sarah'],
-            group: "",
-            selectedMembers: [],
+            // selectedMembers: [],
             paymentDescription: '',
             totalAmount: null,
-            requests : [{requester: "Sophie", amount: 10}, {requester: "Sarah", amount: 10}],
-            pastPayments: [{sender: "Sophie", receiver:"Chi", amount: 10}, {sender: "Sarah", receiver:"Chi", amount: 10}]
+            // requests : [{requester: "Sophie", amount: 10}, {requester: "Sarah", amount: 10}],
+            // pastPayments: [{sender: "Sophie", receiver:"Chi", amount: 10}, {sender: "Sarah", receiver:"Chi", amount: 10}]
         };
     },
     methods: {
         addPayment() {
             if (this.selectedMembers.length > 0 && this.totalAmount && this.paymentDescription) {
                 // Calculate split amount (this is a simple split; you might want more complex logic)
-                const splitAmount = this.totalAmount / this.selectedMembers.length;
+                // const splitAmount = this.totalAmount / this.selectedMembers.length;
                 console.log(`Payment Description: ${this.paymentDescription}`);
                 console.log(`Total Amount: ${this.totalAmount}`);
-                console.log(`Split Among: ${this.selectedMembers.join(', ')}`);
-                console.log(`Each Pays: ${splitAmount}`);
+                // console.log(`Split Among: ${this.selectedMembers.join(', ')}`);
+                // console.log(`Each Pays: ${splitAmount}`);
 
                 // Here you would typically send this data to your backend or handle it accordingly
 
