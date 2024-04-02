@@ -65,13 +65,13 @@ def create_group():
     }), 400
 
 def processCreateGroup(details):
-    curr_user_ban = details["userBAN"]
-    curr_user_fullname = details['userFullname']
-    curr_user_hp = details["userPhoneNum"]
-    curr_user_email = details['userEmail']
+    curr_user_ban = details["curr_user_ban"]
+    curr_user_fullname = details['curr_user_fullname']
+    curr_user_hp = details["curr_user_hp"]
+    curr_user_email = details['curr_user_email']
 
-    group_name = details['groupName']
-    phone_num_list = details['phoneNums']
+    group_name = details['group_name']
+    phone_num_list = details['phone_num_list']
 
     # 2. Send the list of phone numbers {[phoneNum1, phoneNum2, etc.]} to user_accounts to get details
     # Invoke the user_accounts microservice
@@ -79,6 +79,7 @@ def processCreateGroup(details):
     member_details_dict = {}
     count = 0
     for num in phone_num_list:
+        print(num, type(num))
         user_accounts_result = invoke_http(user_accounts_URL+f"{num}", method='GET')
         member_details_dict[count] = user_accounts_result
         count += 1
@@ -135,7 +136,7 @@ def processCreateGroup(details):
     member_details_dict[-1] = {"data": 
                                     {                         
                                     "bank_acct_id": curr_user_ban,
-                                    "user_email": curr_user_email,
+                                    "user_email": details['curr_user_email'],
                                     "user_fullname": curr_user_fullname,
                                     "user_hp": curr_user_hp
                                     }
@@ -224,5 +225,5 @@ def processCreateGroup(details):
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask for " + os.path.basename(__file__) +
-          " for transferring funds...")
+          " for group creation...")
     app.run(host="0.0.0.0", port=5200, debug=True)

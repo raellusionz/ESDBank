@@ -337,16 +337,79 @@ def get_split_requests_of_user_by_user_hp(user_hp):
             }
         )
 
+<<<<<<< Updated upstream
+
+
 # get requested_member where group_id == given_group_id, requested_member.userBAN==currUserBAN and status==pending, with names of requester and payer
+=======
+#get requested_member where group_id == given_group_id, requested_member.userBAN==currUserBAN and status==pending, with names of requester and payer
+# @app.route("/splitRequests/pendingRequests/user_details/<string:user_ban>/<int:user_hp>/<int:group_id>")
+# def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
+
+#     # retrieve list of split_requests in this group that was not made by this user
+#     requests_to_user_list = db.session.scalars(
+#                                         db.select(split_requests)
+#                                             .filter(
+#                                                 and_(split_requests.group_id==group_id,
+#                                                     split_requests.requester_phone_num!=user_hp))).all()
+
+#     if len(requests_to_user_list) == 0:
+#         return jsonify(
+#             {
+#                 "code": 404,
+#                 "message": "The other users in this group have not made any split requests."
+#             }
+#         )
+    
+
+#     pending_requests_to_user_details = {}
+#     for request in requests_to_user_list:
+#         request_req_id = request.req_id
+#         pending_request = db.session.scalars(
+#                             db.select(requested_users).filter(
+#                                 and_(requested_users.req_id==request_req_id,
+#                                      requested_users.userban==user_ban,
+#                                      requested_users.status=="pending")).limit(1)).first()
+#         print(pending_request)
+#         if pending_request != None:
+#             ret_payment_amount = pending_request.indiv_req_amount
+#         requester_phone_num = request.requester_phone_num
+
+#         requester_details = db.session.scalars(
+#                             db.select(members).filter_by(member_hp=requester_phone_num).limit(1)
+#                             ).first()
+
+#         requester_name = requester_details.member_fullname
+
+#         pending_requests_to_user_details[request_req_id] = {
+#                                                             "requester_name": requester_name,
+#                                                             "requester_hp": requester_phone_num,
+#                                                             "amount_to_pay": ret_payment_amount
+#                                                             }
+
+#     return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "pending_requests_to_user_by_id": pending_requests_to_user_details
+#                 }
+#             }
+#         )
+
+>>>>>>> Stashed changes
 @app.route("/splitRequests/pendingRequests/user_details/<string:user_ban>/<int:user_hp>/<int:group_id>")
 def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
 
     # retrieve list of split_requests in this group that was not made by this user
     requests_to_user_list = db.session.scalars(
-                                        db.select(split_requests)
-                                            .filter(
-                                                and_(split_requests.group_id==group_id,
-                                                    split_requests.requester_phone_num!=user_hp))).all()
+        db.select(split_requests)
+        .filter(
+            and_(
+                split_requests.group_id == group_id,
+                split_requests.requester_phone_num != user_hp
+            )
+        )
+    ).all()
 
     if len(requests_to_user_list) == 0:
         return jsonify(
@@ -355,41 +418,119 @@ def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
                 "message": "The other users in this group have not made any split requests."
             }
         )
-    
 
     pending_requests_to_user_details = {}
     for request in requests_to_user_list:
         request_req_id = request.req_id
         pending_request = db.session.scalars(
+<<<<<<< Updated upstream
                             db.select(requested_users).filter(
                                 and_(requested_users.req_id==request_req_id,
                                      requested_users.userban==user_ban,
                                      requested_users.status=="pending")).limit(1)).first()
-        print(pending_request)
         if pending_request != None:
+=======
+            db.select(requested_users)
+            .filter(
+                and_(
+                    requested_users.req_id == request_req_id,
+                    requested_users.userban == user_ban,
+                    requested_users.status == "pending"
+                )
+            )
+            .limit(1)
+        ).first()
+
+        if pending_request is None:
+            pass
+        else:
+>>>>>>> Stashed changes
             ret_payment_amount = pending_request.indiv_req_amount
-        requester_phone_num = request.requester_phone_num
 
-        requester_details = db.session.scalars(
-                            db.select(members).filter_by(member_hp=requester_phone_num).limit(1)
-                            ).first()
+            requester_phone_num = request.requester_phone_num
 
-        requester_name = requester_details.member_fullname
+            requester_details = db.session.scalars(
+                db.select(members)
+                .filter_by(member_hp=requester_phone_num)
+                .limit(1)
+            ).first()
 
-        pending_requests_to_user_details[request_req_id] = {
-                                                            "requester_name": requester_name,
-                                                            "requester_hp": requester_phone_num,
-                                                            "amount_to_pay": ret_payment_amount
-                                                            }
+            if requester_details is not None:
+                requester_name = requester_details.member_fullname
+            else:
+                requester_name = "Unknown"  # Set default value if requester_details is None
+
+            pending_requests_to_user_details[request_req_id] = {
+                "requester_name": requester_name,
+                "requester_hp": requester_phone_num,
+                "amount_to_pay": ret_payment_amount
+            }
 
     return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "pending_requests_to_user_by_id": pending_requests_to_user_details
-                }
+        {
+            "code": 200,
+            "data": {
+                "pending_requests_to_user_by_id": pending_requests_to_user_details
             }
-        )
+        }
+    )
+
+# # get requests where user asked for money and the members have paid
+# @app.route("/splitRequests/acceptedRequests/user_phone_num/<int:user_hp>/<int:group_id>")
+# def get_users_accepted_requests_by_group_id(user_hp, group_id):
+
+#     # retrieve list of split_requests in this group that was not made by this user
+#     users_requests_list = db.session.scalars(
+#                                         db.select(split_requests)
+#                                             .filter(
+#                                                 and_(split_requests.group_id==group_id,
+#                                                     split_requests.requester_phone_num==user_hp))).all()
+
+#     if len(users_requests_list) == 0:
+#         return jsonify(
+#             {
+#                 "code": 404,
+#                 "message": "The user has not made any requests."
+#             }
+#         )
+    
+
+#     users_accepted_split_requests_details = {}
+#     for request in users_requests_list:
+#         request_req_id = request.req_id
+#         accepted_requests_list = db.session.scalars(
+#                             db.select(requested_users).filter(
+#                                 and_(requested_users.req_id==request_req_id,
+#                                      requested_users.status=="accepted"))).all()
+        
+#         if accepted_requests_list:
+#             for accepted_request_user in accepted_requests_list:
+#                 print(accepted_request_user)
+#                 indiv_payment = accepted_request_user.indiv_req_amount
+#                 accepted_request_user_ban = accepted_request_user.userban
+#                 accepted_request_user_details = db.session.scalars(
+#                                                 db.select(members).filter_by(userban=accepted_request_user_ban).limit(1)
+#                                                 ).first()
+            
+#                 if request_req_id in users_accepted_split_requests_details:
+#                     users_accepted_split_requests_details[request_req_id].append({
+#                                                             "name_of_payer": accepted_request_user_details.member_fullname,
+#                                                             "amount_to_pay": indiv_payment
+#                                                             })
+#                 else:
+#                     users_accepted_split_requests_details[request_req_id] = [{
+#                                                             "name_of_payer": accepted_request_user_details.member_fullname,
+#                                                             "amount_to_pay": indiv_payment
+#                                                             }]
+
+#     return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": {
+#                     "accepted_requests_to_user_by_id": users_accepted_split_requests_details
+#                 }
+#             }
+#         )
 
 # add new group and the members into database
 @app.route("/group_details", methods=['POST'])
@@ -606,6 +747,7 @@ def updateRequestStatus(user_ban, req_id, reply):
             "message": "The specific request is not found."
         }
     ), 404
+
 
 
 if __name__ == '__main__':
