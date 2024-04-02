@@ -163,8 +163,17 @@ services:
       context: ./
       dockerfile: make_split_payment_request.Dockerfile
     restart: always
+    depends_on:
+      - group_details
+      - activity_log
+      - error
+      - notification
+      - rabbitmq
     environment:
       dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      group_details_URL : http://group_details:5010/group_details
       PYTHONUNBUFFERED: 1
     ports:
       - "5300:5300"
@@ -177,8 +186,19 @@ services:
       context: ./
       dockerfile: handle_split_reply.Dockerfile
     restart: always
+    depends_on:
+      - group_details
+      - transfer_funds
+      - activity_log
+      - error
+      - notification
+      - rabbitmq
     environment:
       dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      transfer_funds_URL : http://transfer_funds:5100/transfer_funds
+      group_details_URL : http://group_details:5010/group_details
       PYTHONUNBUFFERED: 1
     ports:
       - "5400:5400"
@@ -191,8 +211,19 @@ services:
       context: ./
       dockerfile: create_group.Dockerfile
     restart: always
+    depends_on:
+      - group_details
+      - user_accounts
+      - activity_log
+      - error
+      - notification
+      - rabbitmq
     environment:
       dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      group_details_URL : http://group_details:5010/group_details
+      user_accounts_URL : http://user_accounts:5000/user_accounts
       PYTHONUNBUFFERED: 1
     ports:
       - "5200:5200"
