@@ -3,12 +3,9 @@ const main = Vue.createApp({
 
     data() {
         return {
-            // selectedMembers: [],
             groupId: null,
             paymentDescription: '',
             totalAmount: null,
-            // requests : [{requester: "Sophie", amount: 10}, {requester: "Sarah", amount: 10}],
-            // pastPayments: [{sender: "Sophie", receiver:"Chi", amount: 10}, {sender: "Sarah", receiver:"Chi", amount: 10}]
         };
     },
     methods: {
