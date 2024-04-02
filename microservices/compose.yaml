@@ -18,7 +18,7 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      al_queue_name: Activity_Log
+      al_queue_make_split_payment_request: Activity_Log
       PYTHONUNBUFFERED: 1
  
   #######################################################
@@ -48,7 +48,7 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      e_queue_name: Error
+      e_queue_make_split_payment_request: Error
       PYTHONUNBUFFERED: 1
   
   #######################################################
@@ -64,7 +64,7 @@ services:
     environment:
       rabbit_host: rabbitmq
       rabbit_port: 5672
-      n_queue_name: Notification
+      n_queue_make_split_payment_request: Notification
       PYTHONUNBUFFERED: 1
 
   #######################################################
@@ -138,7 +138,7 @@ services:
   ####################################
   rabbitmq:
     image: rabbitmq:3-management
-    hostname: esd-rabbit  # Corrected from 'hostnotification' to 'hostname'
+    hostmake_split_payment_request: esd-rabbit  # Corrected from 'hostnotification' to 'hostmake_split_payment_request'
     restart: always
     ports:
       - "5672:5672"
@@ -148,3 +148,60 @@ services:
       - ./rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq_definitions.json:/etc/rabbitmq/rabbitmq_definitions.json
       - rabbitmq_data:/var/lib/rabbitmq 
+
+#######################################################
+  # make_split_payment_request: The make_split_payment_request microservice
+  #######################################################
+  make_split_payment_request:
+    build:
+      context: ./
+      dockerfile: make_split_payment_request.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5300:5300"
+
+#######################################################
+  # handle_split_reply: The handle_split_reply microservice
+  #######################################################
+  handle_split_reply:
+    build:
+      context: ./
+      dockerfile: handle_split_reply.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5400:5400"
+
+#######################################################
+  # create_group: The create_group microservice
+  #######################################################
+  create_group:
+    build:
+      context: ./
+      dockerfile: create_group.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5200:5200"
+
+
+#######################################################
+  # group_details: The group_details microservice
+  #######################################################
+  group_details:
+    build:
+      context: ./
+      dockerfile: group_details.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5010:5010"
