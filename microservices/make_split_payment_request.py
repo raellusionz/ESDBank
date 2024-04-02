@@ -62,14 +62,14 @@ def split_payment():
     }), 400
 
 def processSplitPayment(details):
-    curr_user_ban = details["userBAN"]
-    curr_user_fullname = details['userFullname']
-    curr_user_hp = details["userPhoneNum"]
-    curr_user_email = details['userEmail']
+    curr_user_ban = details["currUserBAN"]
+    curr_user_fullname = details['currUserFullname']
+    curr_user_hp = details["curUserPhoneNum"]
+    curr_user_email = details['currUserEmail']
 
     #### these need to be named accordingly when submitted from frontend
     group_id = details['groupID']
-    requested_amount = details['reqAmount']
+    requested_amount = details['requestedAmount']
 
     # 1. Send retrieved member_details to group_details microservice
     print('\n\n-----Invoking group_details microservice-----')

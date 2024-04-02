@@ -67,11 +67,11 @@ def handle_split_reply():
 def processSplitReply(details):
     payingUserFullname = details["payingUserFullname"]
     payingUserEmail = details["payingUserEmail"]
-    payingUserBan = details["payingUserBAN"]
+    payingUserBan = details["payingUserBan"]
     requesterUserPhoneNum = details['requesterUserPhoneNum']
-    request_id = details["ReqID"]
-    amount_to_pay = details['indivReqAmount']
-    reply = details['replyStatus']
+    request_id = details["request_id"]
+    amount_to_pay = details['amount_to_pay']
+    reply = details['reply']
 
     # 1. Send split__reply details to group_details microservice to update status log
     print('\n\n-----Invoking group_details microservice-----')
