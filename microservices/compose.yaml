@@ -13,8 +13,8 @@ services:
       context: ./
       dockerfile: activity_log.Dockerfile
     restart: always
-    # depends_on:
-    #   - rabbitmq
+    depends_on:
+      - rabbitmq
     environment:
     #   rabbit_host: rabbitmq
     #   rabbit_port: 5672
@@ -42,8 +42,8 @@ services:
       context: ./
       dockerfile: error.Dockerfile
     restart: always
-    # depends_on:
-    #   - rabbitmq
+    depends_on:
+      - rabbitmq
     environment:
       # rabbit_host: rabbitmq
       # rabbit_port: 5672
@@ -58,8 +58,8 @@ services:
       context: ./
       dockerfile: notification.Dockerfile
     restart: always
-    # depends_on:
-    #   - rabbitmq
+    depends_on:
+      - rabbitmq
     environment:
       # rabbit_host: rabbitmq
       # rabbit_port: 5672
@@ -74,8 +74,8 @@ services:
       context: ./
       dockerfile: transaction_history.Dockerfile
     restart: always
-    # depends_on:
-    #   - rabbitmq
+    depends_on:
+      - rabbitmq
     environment:
       # rabbit_host: rabbitmq
       # rabbit_port: 5672
@@ -122,12 +122,13 @@ services:
   ####################################
   rabbitmq:
     image: rabbitmq:3-management
-    hostnotification: esd-rabbit
+    hostname: esd-rabbit  # Corrected from 'hostnotification' to 'hostname'
     restart: always
     ports:
       - "5672:5672"
-      # - "15672:15672" (from lab, not sure if we using this)
+      # Uncomment the following line if you need to access the RabbitMQ management interface from your host machine
+      - "15672:15672"
     volumes: 
       - ./rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq_definitions.json:/etc/rabbitmq/rabbitmq_definitions.json
-      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq 
