@@ -16,10 +16,9 @@ services:
     depends_on:
       - rabbitmq
     environment:
-    #   rabbit_host: rabbitmq
-    #   rabbit_port: 5672
-      # al_queue_name: Activity_Log
-      dbURL: postgres://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech:5432/verceldb
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      al_queue_name: Activity_Log
       PYTHONUNBUFFERED: 1
  
   #######################################################
@@ -33,6 +32,8 @@ services:
     environment:
       dbURL: postgresql://default:a9NucShgs4vC@ep-bold-band-a1oubdjz-pooler.ap-southeast-1.aws.neon.tech/verceldb
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
 
   #######################################################
   # error: The error microservice
@@ -45,9 +46,9 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      # rabbit_host: rabbitmq
-      # rabbit_port: 5672
-      # e_queue_name: Error
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      e_queue_name: Error
       PYTHONUNBUFFERED: 1
   
   #######################################################
@@ -61,9 +62,9 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      # rabbit_host: rabbitmq
-      # rabbit_port: 5672
-      # n_queue_name: Notification
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      n_queue_name: Notification
       PYTHONUNBUFFERED: 1
 
   #######################################################
@@ -77,10 +78,12 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      # rabbit_host: rabbitmq
-      # rabbit_port: 5672
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
       dbURL: postgresql://default:BznZuKX3W9LQ@ep-soft-heart-a1pdoa7y-pooler.ap-southeast-1.aws.neon.tech/verceldb
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5002:5002"
   
   #######################################################
   # transfer_funds: The transfer_funds microservice
@@ -90,8 +93,17 @@ services:
       context: ./
       dockerfile: transfer_funds.Dockerfile
     restart: always
+    depends_on:
+      - bank_accounts
+      - user_accounts
+      - transaction_history
+      - activity_log
+      - error
+      - rabbitmq
     environment:
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5100:5100"
 
   #######################################################
   # user_accounts: The user_accounts microservice
@@ -104,6 +116,8 @@ services:
     environment:
       dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5000:5000"
 
   #######################################################
   # user_goal: The user_goal microservice
@@ -116,6 +130,8 @@ services:
     environment:
       dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
       PYTHONUNBUFFERED: 1
+    ports:
+      - "5006:5006"
 
   ####################################
   # RabbitMQ: The messaging broker   
