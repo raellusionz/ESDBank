@@ -30,10 +30,25 @@ from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 import sys
 from pathlib import Path
+import json
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 from invokes import invoke_http
-import json
+import amqp_connection
+
+
+exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
+exchangetype = amqp_connection.secrets['exchangetype'] #topic 
+
+#create a connection and a channel to the broker to publish messages to activity_log, error queues
+connection = amqp_connection.create_connection() 
+channel = connection.channel()
+
+#if the exchange is not yet created, exit the program
+if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
+    print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
+    sys.exit(0)  # Exit with a success status
+
 
 # class ActionExtractBankID(Action):
 #     def name(self):
@@ -99,7 +114,15 @@ class ActionProvideFinancialAdvice(Action):
             advice_message = "<ul>" + " ".join(advice) + "</ul>"  # Concatenate advice items into an unordered list
             advice_message = "</br><h2>Based on your recent spending</h2>" + advice_message
 
+
+
         dispatcher.utter_message(text=advice_message)
+        
+        # publish message to activity_log
+        payload = {"message": "successful run"}
+        message = json.dumps(payload)
+        channel.basic_publish(exchange=exchangename, routing_key="actions.details", 
+            body=message)
 
         # Since there's no specific event to return, return an empty list
         return []
@@ -138,5 +161,11 @@ class ActionGenerateBankStatement(Action):
 
         # Send the message back to the user
         dispatcher.utter_message(text=statement_message)
+
+        # publish message to activity_log
+        payload = {"message": "successful run"}
+        message = json.dumps(payload)
+        channel.basic_publish(exchange=exchangename, routing_key="actions.details", 
+            body=message)
 
         return []
