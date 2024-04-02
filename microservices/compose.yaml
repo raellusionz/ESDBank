@@ -124,7 +124,11 @@ services:
   ####################################
   rabbitmq:
     image: rabbitmq:3-management
+<<<<<<< Updated upstream
     hostnotification: esd-rabbit
+=======
+    #hostmake_split_payment_request: esd-rabbit  # Corrected from 'hostnotification' to 'hostmake_split_payment_request'
+>>>>>>> Stashed changes
     restart: always
     ports:
       - "5672:5672"

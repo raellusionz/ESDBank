@@ -337,11 +337,6 @@ def get_split_requests_of_user_by_user_hp(user_hp):
             }
         )
 
-<<<<<<< Updated upstream
-
-
-# get requested_member where group_id == given_group_id, requested_member.userBAN==currUserBAN and status==pending, with names of requester and payer
-=======
 #get requested_member where group_id == given_group_id, requested_member.userBAN==currUserBAN and status==pending, with names of requester and payer
 # @app.route("/splitRequests/pendingRequests/user_details/<string:user_ban>/<int:user_hp>/<int:group_id>")
 # def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
@@ -396,7 +391,6 @@ def get_split_requests_of_user_by_user_hp(user_hp):
 #             }
 #         )
 
->>>>>>> Stashed changes
 @app.route("/splitRequests/pendingRequests/user_details/<string:user_ban>/<int:user_hp>/<int:group_id>")
 def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
 
@@ -423,13 +417,6 @@ def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
     for request in requests_to_user_list:
         request_req_id = request.req_id
         pending_request = db.session.scalars(
-<<<<<<< Updated upstream
-                            db.select(requested_users).filter(
-                                and_(requested_users.req_id==request_req_id,
-                                     requested_users.userban==user_ban,
-                                     requested_users.status=="pending")).limit(1)).first()
-        if pending_request != None:
-=======
             db.select(requested_users)
             .filter(
                 and_(
@@ -444,7 +431,6 @@ def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
         if pending_request is None:
             pass
         else:
->>>>>>> Stashed changes
             ret_payment_amount = pending_request.indiv_req_amount
 
             requester_phone_num = request.requester_phone_num
