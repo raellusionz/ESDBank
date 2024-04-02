@@ -203,10 +203,11 @@ def get_all_requested_members():
         }
     ), 404
 
-@app.route("/members/bank_acct_id/<string:id_num>")
-def get_member_groups_by_BAN(id_num):
+# get the groups that a member is in using their BAN
+@app.route("/members/bank_acct_id/<string:user_ban>")
+def get_member_groups_by_BAN(user_ban):
     groups_member_is_in_list = db.session.scalars(
-        db.select(members).filter_by(member_ban=id_num)
+        db.select(members).filter_by(member_ban=user_ban)
         ).all()
 
     if len(groups_member_is_in_list):
@@ -225,6 +226,7 @@ def get_member_groups_by_BAN(id_num):
         }
     ), 404
 
+# get each member of a group based on a given group ID number
 @app.route("/members/group_id/<int:group_id_num>")
 def get_members_by_group_id(group_id_num):
     members_of_group_list = db.session.scalars(
@@ -247,6 +249,7 @@ def get_members_by_group_id(group_id_num):
         }
     ), 404
 
+# get each request in a group based off given group ID number, then for each request ID get the associated members who have to pay money
 @app.route("/requestedMembers/group_id/<int:group_id_num>")
 def get_requested_members_by_group_id(group_id_num):
     split_requests_list = db.session.scalars(
@@ -278,7 +281,63 @@ def get_requested_members_by_group_id(group_id_num):
             }
         )
 
+# get the split requests of the user with the given BAN
+@app.route("/requestedMembers/user_ban/<string:user_ban>")
+def get_requested_members_by_userBAN(user_ban):
+    requests_to_user_list = db.session.scalars(
+        db.select(requested_users).filter_by(userban=user_ban)
+        ).all()
 
+    if len(requests_to_user_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "requests_to_this_user": [request.json() for request in requests_to_user_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "The user does not exist."
+        }
+    ), 404
+
+# get the split requests made by the user with the given phone number, and the associated members who need to pay
+@app.route("/splitRequests/requestedMembers/user_hp/<int:user_hp>")
+def get_split_requests_of_user_by_userBAN(user_hp):
+    split_requests_made_by_user_list = db.session.scalars(
+        db.select(split_requests).filter_by(requester_phone_num=user_hp)
+        ).all()
+
+    if len(split_requests_made_by_user_list) == 0:
+        return jsonify(
+            {
+                "code": 404,
+                "message": "This user has not made any split requests."
+            }
+        )
+    
+    data = {}
+    for request in split_requests_made_by_user_list:
+        request_req_id = request.req_id
+        requested_members_list = db.session.scalars(
+            db.select(requested_users).filter_by(req_id=request_req_id)
+            ).all()
+        data[request_req_id] = [member.json() for member in requested_members_list]
+
+    return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "split_requests_made_by_user": [request.json() for request in split_requests_made_by_user_list],
+                    "requested_users_by_req_id": data
+                }
+            }
+        )
+
+# add new group and the members into database
 @app.route("/group_details", methods=['POST'])
 def insertGroupDetails():
     # Check if the submitted details contains valid JSON
@@ -361,7 +420,7 @@ def processGroupDetails(details):
             }
 
 
-
+# add new split_payment request details into the database
 @app.route("/split_payment_details", methods=['POST'])
 def insertSplitPaymentDetails():
     # Check if the submitted details contains valid JSON
