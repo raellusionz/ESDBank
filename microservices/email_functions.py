@@ -11,7 +11,9 @@ def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDa
 
     mail_from = {
         "name": "ESDBank",
-        "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # back up email address below
+        "email": "esdbank@trial-ynrw7gyqxmj42k8e.mlsender.net"
     }
 
     recipients = [
@@ -60,7 +62,9 @@ def sendCreateGroupNotif(inviter, invitee, email, group_name):
 
     mail_from = {
         "name": "ESDBank",
-        "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # back up email address below
+        "email": "esdbank@trial-ynrw7gyqxmj42k8e.mlsender.net"
     }
 
     recipients = [
@@ -112,7 +116,9 @@ def sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, g
 
     mail_from = {
         "name": "ESDBank",
-        "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # "email": "esdbank@trial-3z0vklo89ee47qrx.mlsender.net",
+        # back up email address below
+        "email": "esdbank@trial-ynrw7gyqxmj42k8e.mlsender.net"
     }
 
     recipients = [
