@@ -3,45 +3,70 @@ const main = Vue.createApp({
 
     data() {
         return {
-            // selectedMembers: [],
+            groupId: null,
             paymentDescription: '',
             totalAmount: null,
-            // requests : [{requester: "Sophie", amount: 10}, {requester: "Sarah", amount: 10}],
-            // pastPayments: [{sender: "Sophie", receiver:"Chi", amount: 10}, {sender: "Sarah", receiver:"Chi", amount: 10}]
         };
     },
     methods: {
         addPayment() {
-            if (this.selectedMembers.length > 0 && this.totalAmount && this.paymentDescription) {
-                // Calculate split amount (this is a simple split; you might want more complex logic)
-                // const splitAmount = this.totalAmount / this.selectedMembers.length;
-                console.log(`Payment Description: ${this.paymentDescription}`);
-                console.log(`Total Amount: ${this.totalAmount}`);
-                // console.log(`Split Among: ${this.selectedMembers.join(', ')}`);
-                // console.log(`Each Pays: ${splitAmount}`);
-
-                // Here you would typically send this data to your backend or handle it accordingly
-
-                // Reset form for next entry
-                this.selectedMembers = [];
-                this.paymentDescription = '';
-                this.totalAmount = null;
-                // Optionally close the modal here if you're controlling it programmatically
-            } else {
-                alert("Please fill in all fields and select at least one member.");
-            }
+            console.log(this.totalAmount, this.groupId);
+            // Make AJAX POST request to Flask app
+            fetch('/startSplitPayFromUI', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"requestedAmount": this.totalAmount, "groupID": this.groupId})
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success response
+                    alert('Request successful!');
+                } else {
+                    // Handle error response
+                    alert('Error occurred during addPayment1.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error occurred during addPayment2.');
+            });
         },
-        accept() {
 
+        handle_split_reply(reply, requestId, request) {
+            fetch('/handle_split_reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"replyStatus": reply, "requestId": requestId, "request": request})
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle success response
+                    alert('Request successful!');
+                } else {
+                    // Handle error response
+                    alert('Error occurred during addPayment1.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error occurred during addPayment2.');
+            });
         },
-        decline() {
 
+        accept(requestId, request) {
+            this.handle_split_reply("accept", requestId, request)
+        },
+        decline(requestId, request) {
+            this.handle_split_reply("decline", requestId, request)
         },
     },
 
     mounted() {
-        let urlParams = new URLSearchParams(window.location.search);
-        this.group = urlParams.get('groupName'); // "MyParam"
+        this.groupId = document.getElementById('groupId').value;
     },
 });
 
