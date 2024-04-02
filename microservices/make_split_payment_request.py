@@ -52,7 +52,7 @@ def split_payment():
 
             return jsonify({
                 "code": 500,
-                "message": "split_payment.py internal error: " + ex_str
+                "message": "make_split_payment_request.py internal error: " + ex_str
             }), 500
 
     # if reached here, not a JSON request.
@@ -155,5 +155,5 @@ def processSplitPayment(details):
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask for " + os.path.basename(__file__) +
-          " for transferring funds...")
+          " for making split payment requests funds...")
     app.run(host="0.0.0.0", port=5300, debug=True)
