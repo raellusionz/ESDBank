@@ -1,18 +1,33 @@
 # ESDBank
-
-
-jinjaflaskinstallation https://realpython.com/primer-on-jinja-templating/#install-jinja
-
-database methods https://www.geeksforgeeks.org/introduction-to-psycopg2-module-in-python/
-
-# ESDBank
 An web application that aims to mimic a bank online service. It caters to three scenarios:
 1. Payment transfers between different users of the app
 2. Splitting share bills between users 
 3. An AI powered chatbot to provide advice on users' spending
 
+## Setup
+
+1. Clone the repository to your local machine.
+
+2. Install the required Python modules by running:
+
+   ```bash
+   pip install -r requirements.txt
+
+To run each microservice locally:
+
+Open a terminal window and navigate to the directory "cd microservices"
+
+Run the command "docker run -d --hostname esd-rabbit --name rabbitmq-mgmt -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
+
+Run the amqp_setup.py
+
+Run the Python script for each microservice.
+
+Once all microservices are running, you can access the application at http://localhost:4999/login.
+
+Then login to jakoblwr@gmail.com , and wait for it to initalize.
+
 # Links
-Deployed Website: esdbankapp.vercel.app <br>
 Git Repo: https://github.com/raellusionz/ESDBank <br>
 
 # Tech Stacks
@@ -25,21 +40,5 @@ Front end:
   - Vue.js
 
 Back end:
-- 
 
-Database:
-- 
 
-APIs used:
-1. 
-
-# Team Contributions
-| Member  | Contribution |
-| ------------- | ------------- |
-| Nguyen Le Cam Chi |  |
-| Jakob Lie |  |
-| Sarah Thauheed  |  |
-| Rowyane Seah  |  |
-| Sophie Montalban  |  |
-
-# Notes
