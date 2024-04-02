@@ -4,8 +4,10 @@
         <h2>{{content["groupName"]}}</h2>
         <ul class="list-group w-75 mx-auto">
             <li class="list-group-item"><b>Members</b></li>
-            <li class="list-group-item" v-for="member in members">{[member]}</li>
-          </ul>
+            {% for member in content["members"] -%}
+            <li class="list-group-item">{{member['member_fullname']}}</li>
+            {%- endfor %}
+        </ul>
     </div>
     <div class="container-fluid text-center">
         <button class="btn btn-light border border-primary text-primary m-3" data-bs-toggle="modal" data-bs-target="#addNewPayment">Add new payment</button>
@@ -23,10 +25,12 @@
                     Members
                     <hr>
                     <!-- Checkboxes for Group Members -->
-                    <div v-for="(member, index) in members" :key="index" class="text-start m-1">
-                        <input type="checkbox" :id="member" v-model="selectedMembers" :value="member">
-                        <label :for="member" class="m-1">{[ member ]}</label>
-                    </div>
+                    <!-- {% for member in content["members"]-%}
+                      <div>
+                        <input type="checkbox" id="{{member['member_fullname']}}" v-model="selectedMembers" value="{{member['member_hp']}}">
+                        <label for="{{member['member_fullname']}}" class="m-1">{{ member['member_fullname'] }}</label>
+                      </div>
+                    {%- endfor %} -->
                     <hr>
                     <!-- Payment Details -->
                     <div class="mb-3">
