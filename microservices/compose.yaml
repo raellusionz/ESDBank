@@ -1,0 +1,135 @@
+version: "3.8"
+
+volumes:
+  rabbitmq_data:
+
+services:
+ 
+  ###################################
+  # Activity Log: The Activity Log microservice
+  ###################################
+  activity_log:
+    build:
+      context: ./
+      dockerfile: activity_log.Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      #a_queue_notification: Activity_Log need?? i dunno
+      dbURL: postgres://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech:5432/verceldb
+      PYTHONUNBUFFERED: 1
+ 
+  #######################################################
+  # Bank accounts: The Bank accounts microservice
+  #######################################################
+  bank_accounts:
+    build:
+      context: ./
+      dockerfile: bank_accounts.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:a9NucShgs4vC@ep-bold-band-a1oubdjz-pooler.ap-southeast-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+
+  #######################################################
+  # error: The error microservice
+  #######################################################
+  error:
+    build:
+      context: ./
+      dockerfile: error.Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      #e_queue_notification: Error need?? i dunno
+      PYTHONUNBUFFERED: 1
+  
+  #######################################################
+  # notification: The notification microservice
+  #######################################################
+  notification:
+    build:
+      context: ./
+      dockerfile: notification.Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      #n_queue_notification: Notification need?? i dunno
+      PYTHONUNBUFFERED: 1
+
+  #######################################################
+  # transaction_history: The transaction_history microservice
+  #######################################################
+  transaction_history:
+    build:
+      context: ./
+      dockerfile: transaction_history.Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      #t_queue_notification: Transaction_History need?? i dunno
+
+      dbURL: postgresql://default:BznZuKX3W9LQ@ep-soft-heart-a1pdoa7y-pooler.ap-southeast-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+  
+  #######################################################
+  # transfer_funds: The transfer_funds microservice
+  #######################################################
+  transfer_funds:
+    build:
+      context: ./
+      dockerfile: transfer_funds.Dockerfile
+    restart: always
+    environment:
+      PYTHONUNBUFFERED: 1
+
+  #######################################################
+  # user_accounts: The user_accounts microservice
+  #######################################################
+  user_accounts:
+    build:
+      context: ./
+      dockerfile: user_accounts.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+
+  #######################################################
+  # user_goal: The user_goal microservice
+  #######################################################
+  user_goal:
+    build:
+      context: ./
+      dockerfile: user_goal.Dockerfile
+    restart: always
+    environment:
+      dbURL: postgresql://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech/verceldb
+      PYTHONUNBUFFERED: 1
+
+  ####################################
+  # RabbitMQ: The messaging broker   
+  ####################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostnotification: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      # - "15672:15672" (from lab, not sure if we using this)
+    volumes: 
+      - ./rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ./rabbitmq_definitions.json:/etc/rabbitmq/rabbitmq_definitions.json
+      - rabbitmq_data:/var/lib/rabbitmq
