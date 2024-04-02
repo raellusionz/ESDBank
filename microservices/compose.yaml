@@ -98,9 +98,15 @@ services:
       - user_accounts
       - transaction_history
       - activity_log
+      - notification
       - error
       - rabbitmq
     environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      user_accounts_URL : http://user_accounts:5000/user_accounts
+      bank_accounts_URL : http://bank_accounts:5001/bank_accounts
+      transaction_history_URL : http://transaction_history:5002/transaction_history
       PYTHONUNBUFFERED: 1
     ports:
       - "5100:5100"
