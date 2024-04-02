@@ -13,11 +13,11 @@ services:
       context: ./
       dockerfile: activity_log.Dockerfile
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
+    #   rabbit_host: rabbitmq
+    #   rabbit_port: 5672
       # al_queue_name: Activity_Log
       dbURL: postgres://default:vHFyts8wa4PK@ep-shiny-wave-a4w35od7-pooler.us-east-1.aws.neon.tech:5432/verceldb
       PYTHONUNBUFFERED: 1
@@ -42,11 +42,11 @@ services:
       context: ./
       dockerfile: error.Dockerfile
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
+      # rabbit_host: rabbitmq
+      # rabbit_port: 5672
       # e_queue_name: Error
       PYTHONUNBUFFERED: 1
   
@@ -58,11 +58,11 @@ services:
       context: ./
       dockerfile: notification.Dockerfile
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
+      # rabbit_host: rabbitmq
+      # rabbit_port: 5672
       # n_queue_name: Notification
       PYTHONUNBUFFERED: 1
 
@@ -74,12 +74,11 @@ services:
       context: ./
       dockerfile: transaction_history.Dockerfile
     restart: always
-    depends_on:
-      - rabbitmq
+    # depends_on:
+    #   - rabbitmq
     environment:
-      rabbit_host: rabbitmq
-      rabbit_port: 5672
-      
+      # rabbit_host: rabbitmq
+      # rabbit_port: 5672
       dbURL: postgresql://default:BznZuKX3W9LQ@ep-soft-heart-a1pdoa7y-pooler.ap-southeast-1.aws.neon.tech/verceldb
       PYTHONUNBUFFERED: 1
   
