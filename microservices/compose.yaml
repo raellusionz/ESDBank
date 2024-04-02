@@ -2,12 +2,6 @@ version: "3.8"
 
 volumes:
   rabbitmq_data:
-  pgdata: 
-
-networks:
-  kong-net:
-    driver: bridge
-    name: kong-net     
 
 services:
  
