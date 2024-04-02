@@ -67,10 +67,12 @@ def splitpay():
 @app.route("/splitpay/group/<groupName>/<groupID>")
 def splitpayGrp(groupName, groupID):
     bankID = session["bankID"]
+    members = invoke_http("http://127.0.0.1:5010/members/group_id/" + str(groupID), method='GET')
     content = {
             "bankID": bankID,
             "groupName": groupName,
-            "groupID": groupID
+            "groupID": groupID,
+            "members": members['data']['groups_members'],
         }
     return render_template("splitpayGrp.html", content=content)
 
