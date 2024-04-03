@@ -52,9 +52,6 @@ def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDa
     # using print() will also return status code and data
     mailer.send(mail_body)
 
-    # using print() will also return status code and data
-    mailer.send(mail_body)
-
 def sendCreateGroupNotif(inviter, invitee, email, group_name):
 
     # define an empty dict to populate with mail values
