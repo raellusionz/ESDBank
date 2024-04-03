@@ -14,6 +14,7 @@ An web application that aims to mimic a bank online service. It caters to three 
 # Links
 Deployed Website: esdbankapp.vercel.app <br>
 Git Repo: https://github.com/raellusionz/ESDBank <br>
+Youtube Demostration of user scernario: https://www.youtube.com/watch?v=p2Aaqf0ydKA
 
 # Tech Stacks
 Front end:
