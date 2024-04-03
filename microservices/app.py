@@ -103,8 +103,6 @@ def splitpayGrp(groupName, groupID):
                 "pendingRequests": pendingRequests['data']['pending_requests_to_user_by_id'],
                 "members": members['data']['groups_members'],
             }
-    # print(pendingRequests['data']['pending_requests_to_user_by_id'], "IAMHERE1")
-    # print(members['data']['groups_members'], "IAMHERE2")
     return render_template("splitpayGrp.html", content=content)
 
 @app.route("/startSplitPayFromUI", methods=['POST'])
