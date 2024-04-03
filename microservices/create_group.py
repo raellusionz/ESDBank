@@ -32,6 +32,10 @@ if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
 
+@app.route("/")
+def homepage():
+    return "Welcome to the homepage of the create_group microservice Lab4Proj."
+
 @app.route("/create_group", methods=['POST'])
 def create_group():
     # Simple check of input format and data of the request are JSON

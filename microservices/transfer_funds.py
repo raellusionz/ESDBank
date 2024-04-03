@@ -30,6 +30,10 @@ if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
 
+@app.route("/")
+def homepage():
+    return "Welcome to the homepage of the transfer_funds microservice Lab4Proj."
+
 @app.route("/transfer_funds", methods=['POST'])
 def transfer_funds():
     # Simple check of input format and data of the request are JSON
