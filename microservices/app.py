@@ -86,13 +86,25 @@ def splitpayGrp(groupName, groupID):
     members = invoke_http("http://127.0.0.1:5010/members/group_id/" + str(groupID), method='GET')
     pendingRequests = invoke_http("http://127.0.0.1:5010/splitRequests/pendingRequests/user_details/"+ str(bankID) + "/" + str(session['userPhoneNum']) + "/" + str(groupID), method='GET')
     # print(pendingRequests, bankID, session['userPhoneNum'], groupID)
-    content = {
+    if pendingRequests["code"] == 404:
+        content = {
             "bankID": bankID,
             "groupName": groupName,
             "groupID": groupID,
-            "pendingRequests": pendingRequests['data']['pending_requests_to_user_by_id'],
+            "pendingRequests": [],
             "members": members['data']['groups_members'],
         }
+
+    else:
+        content = {
+                "bankID": bankID,
+                "groupName": groupName,
+                "groupID": groupID,
+                "pendingRequests": pendingRequests['data']['pending_requests_to_user_by_id'],
+                "members": members['data']['groups_members'],
+            }
+    # print(pendingRequests['data']['pending_requests_to_user_by_id'], "IAMHERE1")
+    # print(members['data']['groups_members'], "IAMHERE2")
     return render_template("splitpayGrp.html", content=content)
 
 @app.route("/startSplitPayFromUI", methods=['POST'])

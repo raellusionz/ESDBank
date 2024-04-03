@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="text-center p-3">
-        <h2>{{ content["groupName"] }}</h2>
+        <h2>{{content["groupName"]}}</h2>
         <ul class="list-group w-75 mx-auto">
             <li class="list-group-item"><b>Members</b></li>
             {% for member in content["members"] -%}
-            <li class="list-group-item">{{ member['member_fullname'] }}</li>
+            <li class="list-group-item">{{member['member_fullname']}}</li>
             {%- endfor %}
         </ul>
     </div>
@@ -39,35 +39,32 @@
         </div>
     </div>
 
-    {% if content["pendingRequests"] %}
     <div class="p-3">
         <h4>Requested Payments</h4>
         <table class="table">
             {% for requestId, request in content['pendingRequests'].items() -%}
             <tr>
                 <td>
-                    {{ request['requester_name'] }} requests ${{ request['amount_to_pay'] }}
+                    {{request['requester_name']}} requests ${{request['amount_to_pay']}}
                 </td>
                 <td class="text-end">
                     <span>
-                        <button type="button" class="btn btn-success mx-1" @click="accept({{ requestId }},{{ request }})">Accept</button>
-                        <button type="button" class="btn btn-danger mx-1" @click="decline({{ requestId }},{{ request }})">Decline</button>
+                        <button type="button" class="btn btn-success mx-1" @click="accept({{requestId}},{{request}})">Accept</button>
+                        <button type="button" class="btn btn-danger mx-1" @click="decline({{requestId}},{{request}})">Decline</button>
                     </span>
                 </td>
             </tr>
             {%- endfor %}
         </table>
     </div>
-    {% else %}
-    <div class="p-3">
-        <h4>Requested Payments</h4>
+    <!-- <div class="p-3">
+        <h4>Past payments</h4>
         <table class="table">
-            <tr>
-                <td colspan="2">You have no pending requests.</td>
+            <tr v-for="pastPayment in pastPayments">
+                <td>{[pastPayment.sender]} transferred {[pastPayment.receiver]} ${[pastPayment.amount]}</td>
             </tr>
         </table>
-    </div>
-    {% endif %}
+    </div> -->
 {% endblock %}
 
 {% block scriptsCall %}
