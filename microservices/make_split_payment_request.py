@@ -12,7 +12,7 @@ import amqp_connection
 app = Flask(__name__)
 CORS(app)
 
-group_details_URL = "http://127.0.0.1:5010/split_payment_details"
+group_details_URL = "http://group_details:5010/split_payment_details"
 
 # These exchanges may need to be changed specific to this MS
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic

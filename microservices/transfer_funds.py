@@ -12,9 +12,9 @@ import amqp_connection
 app = Flask(__name__)
 CORS(app)
 
-user_accounts_URL = "http://127.0.0.1:5000/userAccounts/hp_num/"
-bank_accounts_URL = "http://127.0.0.1:5001/bankAccounts/transferral/"
-transaction_history_URL = "http://127.0.0.1:5002/transaction_history"
+user_accounts_URL = "http://user_accounts:5000/userAccounts/hp_num/"
+bank_accounts_URL = "http://bank_accounts:5001/bankAccounts/transferral/"
+transaction_history_URL = "http://transaction_history:5002/transaction_history"
 
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
 # exchangetype = amqp_connection.secrets['exchangetype'] #topic 
@@ -32,7 +32,7 @@ if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
 
 @app.route("/")
 def homepage():
-    return "Welcome to the homepage of the transfer_funds microservice Lab4Proj."
+    return "Welcome to the homepage of the tr microservice Lab4Proj."
 
 @app.route("/transfer_funds", methods=['POST'])
 def transfer_funds():
@@ -208,8 +208,6 @@ def processTransferFunds(details):
 
     # 9. Send the relevant info {senderFullname, recipientFullname, senderEmail, recipientEmail} to notification microservice
     # Invoke the notification microservice
-    print('\n\n-----Invoking notification microservice-----')
-
     senderFullname = details["senderFullname"]
     senderEmail = details["senderEmail"]
     recipientFullname = user_accounts_result["data"]["user_fullname"]

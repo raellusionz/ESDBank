@@ -12,10 +12,8 @@ import amqp_connection
 app = Flask(__name__)
 CORS(app)
 
-user_accounts_URL = "http://127.0.0.1:5000/userAccounts/hp_num/"
-#bank_accounts_URL = "http://127.0.0.1:5001/bankAccounts/transferral/"
-#transaction_history_URL = "http://127.0.0.1:5002/transaction_history"
-group_details_URL = "http://127.0.0.1:5010/group_details"
+user_accounts_URL = "http://user_accounts:5000/userAccounts/hp_num/"
+group_details_URL = "http://group_details:5010/group_details"
 
 # These exchanges may need to be changed specific to this MS
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic

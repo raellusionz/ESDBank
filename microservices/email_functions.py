@@ -1,8 +1,8 @@
 from mailersend import emails
-from dotenv import dotenv_values
 
 # mailer = emails.NewEmail(dotenv_values('../.env.development.local')['EMAIL_API'])
-mailer = "mlsn.3e5737cab08ea7a94f0c5081459c767e15eeb577689e714bf740f4e53b6dc01f"
+
+mailer = emails.NewEmail("mlsn.da79fdc5f3e8a446005568af01f8cd39fcc38bce201323d52403cefd43dfc8d8")
 
 def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDate, transactionID, content):
 

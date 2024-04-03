@@ -13,8 +13,8 @@ app = Flask(__name__)
 CORS(app)
 
 # routes to group_details function that updates the request status
-group_details_URL = "http://127.0.0.1:5010/requestedMembers/updateRequest/"
-transfer_funds_URL = "http://127.0.0.1:5100/transfer_funds"
+group_details_URL = "http://group_details:5010/requestedMembers/updateRequest/"
+transfer_funds_URL = "http://transfer_funds:5100/transfer_funds"
 
 # These exchanges may need to be changed specific to this MS
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
