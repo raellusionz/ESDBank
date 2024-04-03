@@ -2,10 +2,8 @@
 # The above shebang (#!) operator tells Unix-like environments
 # to run this file as a python3 script
 
-from enum import Enum
-
 import sys
-from email_functions import sendCreateGroupNotif, sendSplitRequestNotif, sendTransferFundsNotif
+import email_functions
 
 import amqp_connection
 import json
@@ -74,7 +72,7 @@ def processSplitRequestNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, groupName, requestDateTime)
+        email_functions.sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, groupName, requestDateTime)
         result = {
                 "code": 201,
                 "message": "Notification mails of split request successfully sent to requested users."
@@ -113,7 +111,7 @@ def processCreateGroupNotification(details):
     print()  # print a new line feed as a separator
 
     try:
-        sendCreateGroupNotif(inviter, invitee, email, group_name)
+        email_functions.sendCreateGroupNotif(inviter, invitee, email, group_name)
         result = {
                 "code": 201,
                 "message": "Notification mails of group invite successfully sent."
@@ -156,9 +154,11 @@ def processTransferFundsNotification(details):
     recipientContent = "Received from"
     print()  # print a new line feed as a separator
 
+
     try:
-        sendTransferFundsNotif(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
-        sendTransferFundsNotif(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
+
+        email_functions.sendTransferFundsNotif(senderFullname, recipientFullname, senderEmail, amount, transactionDate, transactionID, senderContent)
+        email_functions.sendTransferFundsNotif(recipientFullname, senderFullname, recipientEmail, amount, transactionDate, transactionID, recipientContent)
         result = {
                 "code": 201,
                 "message": "Notification mails of fund transferral successfully sent."

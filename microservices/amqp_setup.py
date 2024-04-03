@@ -12,7 +12,7 @@ import pika
 # error_queue = secrets['e_queue_name'] #Error
 # notification_queue = secrets['n_queue_name'] #Notification
 
-hostname = "localhost" #localhost
+hostname = "rabbitmq" #localhost
 port = 5672        #5672 
 exchangename = "transfer_funds_topic" #transfer_funds_topic
 exchangetype = "topic" #topic
