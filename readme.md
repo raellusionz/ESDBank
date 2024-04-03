@@ -29,6 +29,7 @@ Then login to jakoblwr@gmail.com , and wait for it to initalize.
 
 # Links
 Git Repo: https://github.com/raellusionz/ESDBank <br>
+Youtube Demostration of user scernario: https://www.youtube.com/watch?v=p2Aaqf0ydKA
 
 # Tech Stacks
 Front end:
