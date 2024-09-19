@@ -403,7 +403,8 @@ def get_pending_requests_to_user_by_group_id(user_ban, user_hp, group_id):
         )
     ).all()
 
-    if len(requests_to_user_list) == 0:
+    #if len(requests_to_user_list) == 0 or requests_to_user_list.first() == []:
+    if not requests_to_user_list or all(not req for req in requests_to_user_list):
         return jsonify(
             {
                 "code": 404,

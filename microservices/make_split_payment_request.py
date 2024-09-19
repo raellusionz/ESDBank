@@ -12,7 +12,7 @@ import amqp_connection
 app = Flask(__name__)
 CORS(app)
 
-group_details_URL = "http://127.0.0.1:5010/split_payment_details"
+group_details_URL = "http://group_details:5010/split_payment_details"
 
 # These exchanges may need to be changed specific to this MS
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
@@ -28,6 +28,10 @@ channel = connection.channel()
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
+
+@app.route("/")
+def homepage():
+    return "Welcome to the homepage of the make_split_payment_request microservice Lab4Proj."
 
 @app.route("/split_payment", methods=['POST'])
 def split_payment():

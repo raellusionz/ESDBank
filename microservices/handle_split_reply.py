@@ -13,8 +13,8 @@ app = Flask(__name__)
 CORS(app)
 
 # routes to group_details function that updates the request status
-group_details_URL = "http://127.0.0.1:5010/requestedMembers/updateRequest/"
-transfer_funds_URL = "http://127.0.0.1:5100/transfer_funds"
+group_details_URL = "http://group_details:5010/requestedMembers/updateRequest/"
+transfer_funds_URL = "http://transfer_funds:5100/transfer_funds"
 
 # These exchanges may need to be changed specific to this MS
 # exchangename = amqp_connection.secrets['exchangename'] #transfer_funds_topic
@@ -31,7 +31,10 @@ if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
 
-# 
+@app.route("/")
+def homepage():
+    return "Welcome to the homepage of the handle_split_reply microservice Lab4Proj."
+
 @app.route("/handle_split_reply", methods=['POST'])
 def handle_split_reply():
     # Simple check of input format and data of the request are JSON

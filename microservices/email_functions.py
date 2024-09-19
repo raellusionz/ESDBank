@@ -1,8 +1,8 @@
 from mailersend import emails
-from dotenv import dotenv_values
 
 # mailer = emails.NewEmail(dotenv_values('../.env.development.local')['EMAIL_API'])
-mailer = "mlsn.3e5737cab08ea7a94f0c5081459c767e15eeb577689e714bf740f4e53b6dc01f"
+
+mailer = emails.NewEmail("mlsn.da79fdc5f3e8a446005568af01f8cd39fcc38bce201323d52403cefd43dfc8d8")
 
 def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDate, transactionID, content):
 
@@ -48,9 +48,6 @@ def sendTransferFundsNotif(name1, name2, email, transactionAmount, transactionDa
     mailer.set_plaintext_content("This is the text content", mail_body)
     mailer.set_reply_to(reply_to, mail_body)
 
-
-    # using print() will also return status code and data
-    mailer.send(mail_body)
 
     # using print() will also return status code and data
     mailer.send(mail_body)
@@ -157,14 +154,3 @@ def sendSplitRequestNotif(requesterName, payerName, payerEmail, requestAmount, g
 
     # using print() will also return status code and data
     mailer.send(mail_body)
-
-inviter = "Jakob Lie"
-invitee = "Sarah Thauheed"
-email1 = "jakoblwr@gmail.com"
-group_name = "RainbowNoodles"
-email2 = "sarah.thauheed@hotmail.com"
-print("Check0")
-sendCreateGroupNotif(inviter, invitee,email2, group_name)
-print("CHeck 1")
-sendCreateGroupNotif(inviter, invitee,email1, group_name)
-print("Check2")

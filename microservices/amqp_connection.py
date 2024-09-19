@@ -6,7 +6,7 @@ secrets = dotenv_values("../.env.development.local")
 
 # hostname = secrets['hostname'] #localhost
 # port = secrets['port']        #5672 
-hostname = "localhost"
+hostname = "rabbitmq"
 port = 5672        #5672 
 
 # function to create a connection to the broker
